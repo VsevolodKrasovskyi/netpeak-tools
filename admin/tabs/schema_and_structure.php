@@ -1,19 +1,23 @@
 <?php
 include NETPEAK_SEO_COMPONENTS_ADMIN . 'tab-header.php';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_schema_data'])) {
-    save_schema_data(); 
-}
+
 ?>
 <h2><?php _e('Schema & Structure','netpeak-seo');?></h2>
 
-<form method="post" action="options.php">
+<form method="post" action="">
     <?php
-    // Get data
+    // Save data
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_schema_data'])) {
+        save_schema_data(); 
+    }
+    //Get data
     $data = get_schema_data(isset($_POST['schema_type']) ? $_POST['schema_type'] : 'Organization');
-    settings_fields( 'netpeak_seo_schema_ld_json' );
-    do_settings_sections( 'netpeak_seo_schema_organization_and_person' );
 
+    // settings_fields( 'netpeak_seo_schema_ld_json' );
+    // do_settings_sections( 'netpeak_seo_schema_organization_and_person' );
+
+    
     //Inputs
     $schema_type = isset($data['schema_type']) ? $data['schema_type'] : '';
     $organization_name = isset($data['organization_name']) ? $data['organization_name'] : '';
