@@ -8,7 +8,7 @@ function output_schema_json_ld() {
 
     // Getting data for the category 'organisation&person'
     $schema_row = $wpdb->get_row(
-        $wpdb->prepare("SELECT schema_name, schema_data FROM {$table_name} WHERE schema_category = %s", $schema_category),
+        $wpdb->prepare("SELECT schema_type, schema_data FROM {$table_name} WHERE schema_category = %s", $schema_category),
         ARRAY_A
     );
 
@@ -19,7 +19,7 @@ function output_schema_json_ld() {
         // Building JSON-LD structure
         $json_ld = array(
             '@context' => 'https://schema.org',
-            '@type' => $schema_row['schema_name'],
+            '@type' => $schema_row['schema_type'],
             'name' => $schema['organization_name'],
             'legalName' => $schema['organization_legal_name'],
             'url' => $schema['organization_url'],

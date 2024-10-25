@@ -62,7 +62,7 @@ function modify_image_attributes($content) {
             }
 
             $img->setAttribute('alt', $current_page_title);
-            $img->setAttribute('title', $current_page_title . ' - ' . $site_domain . $title_suffix);
+            $img->setAttribute('title', $current_page_title . $title_suffix);
         }
 
         return $dom->saveHTML();

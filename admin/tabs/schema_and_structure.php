@@ -13,11 +13,6 @@ include NETPEAK_SEO_COMPONENTS_ADMIN . 'tab-header.php';
     }
     //Get data
     $data = get_schema_data(isset($_POST['schema_type']) ? $_POST['schema_type'] : 'Organization');
-
-    // settings_fields( 'netpeak_seo_schema_ld_json' );
-    // do_settings_sections( 'netpeak_seo_schema_organization_and_person' );
-
-    
     //Inputs
     $schema_type = isset($data['schema_type']) ? $data['schema_type'] : '';
     $organization_name = isset($data['organization_name']) ? $data['organization_name'] : '';
