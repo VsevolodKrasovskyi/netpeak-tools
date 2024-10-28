@@ -24,7 +24,7 @@ include NETPEAK_SEO_COMPONENTS_ADMIN . 'tab-header.php';
             </tr>
             <!-- Elementor integration -->
             <tr valign="top">
-                <th><?php _ex('Plugin for Elementor Builder', 'alt title page admin', 'netpeak-seo'); ?></th>
+                <th><?php _ex('Addon for Elementor', 'alt title page admin', 'netpeak-seo'); ?></th>
                 <td>
                     <label class="switch switch-disable">
                         <input type="checkbox" class="dependent-checkbox" name="netpeak_seo_alt_title_generate_elementor" value="1" <?php checked(1, get_option('netpeak_seo_alt_title_generate_elementor'), true); ?> />
@@ -41,7 +41,7 @@ include NETPEAK_SEO_COMPONENTS_ADMIN . 'tab-header.php';
             </tr>
             <!-- Enable automatic Atl&Title -->
             <tr valign="top">
-                <th><?php _ex('Enable Auto Atl&Title', 'alt title page admin', 'netpeak-seo'); ?></th>
+                <th><?php _ex('Enable Auto Genetare Atl&Title', 'alt title page admin', 'netpeak-seo'); ?></th>
                 <td>
                     <label class="switch switch-disable">
                         <input type="checkbox" class="dependent-checkbox" name="netpeak_seo_alt_title_auto_enabled" value="1" <?php checked(1, get_option('netpeak_seo_alt_title_auto_enabled'), true); ?> />

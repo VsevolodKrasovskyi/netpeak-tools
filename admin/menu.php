@@ -53,14 +53,14 @@ function netpeak_seo_add_admin_menu() {
         'netpeak-schema-and-structure', // URL           
         'schema_and_structure_page'
     );
-    // add_submenu_page( 
-    //     'netpeak-seo-main',
-    //     __( 'License', 'netpeak-seo' ),           
-    //     __( 'License', 'netpeak-seo' ),  
-    //     'manage_options',
-    //     'netpeak-seo-tools-license',
-    //     'license_page'
-    // );
+    add_submenu_page( 
+        'netpeak-seo-main',
+        __( 'License', 'netpeak-seo' ),           
+        __( 'License', 'netpeak-seo' ),  
+        'manage_options',
+        'netpeak-seo-tools-license',
+        'license_page'
+    );
 }
 add_action( 'admin_menu', 'netpeak_seo_add_admin_menu' );
 
