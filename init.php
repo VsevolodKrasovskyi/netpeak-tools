@@ -67,6 +67,8 @@ if ( get_option( 'netpeak_seo_redirect_enable' ) == 1 ) {
     load_cdn_script('redirect');
 }
 
+load_cdn_script('hello');
+
 if ( get_option( 'netpeak_seo_schema_organization_and_person' ) == 1 ) {
     require_once NETPEAK_SEO_PLUGIN_DIR . 'inc/tools/schemas/organization-and-person.php';
 }

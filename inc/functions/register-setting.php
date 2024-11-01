@@ -27,8 +27,6 @@ function netpeak_register_settings() {
     #Schema
     register_setting( 'netpeak_seo_schema_ld_json', 'netpeak_seo_schema_organization_and_person' );
     #License
-    // register_setting( 'netpeak_seo_license', 'netpeak_seo_license_key' );
-    // register_setting( 'netpeak_seo_license', 'netpeak_seo_license_auth_token' );
     register_setting( 'netpeak_seo_license', 'netpeak_seo_license_email' );
     register_setting( 'netpeak_seo_license', 'netpeak_seo_license_password' );
 
