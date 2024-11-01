@@ -1,8 +1,23 @@
 <?php
-// Function for authentication and token retrieval
+// Function for adding a message to admin_notices
+function netpeak_seo_add_admin_notice($message, $type = 'error') {
+    set_transient('netpeak_seo_admin_notice', ['message' => $message, 'type' => $type], 30);
+}
+
+// Hook to display the message
+add_action('admin_notices', 'netpeak_seo_display_admin_notice');
+function netpeak_seo_display_admin_notice() {
+    if ($notice = get_transient('netpeak_seo_admin_notice')) {
+        $class = $notice['type'] === 'success' ? 'notice-success' : 'notice-error';
+        echo "<div class='notice {$class} is-dismissible'><p>{$notice['message']}</p></div>";
+        delete_transient('netpeak_seo_admin_notice');
+    }
+}
+
+// Authentication and token retrieval function
 function get_cdn_token() {
-    $email = get_option( 'netpeak_seo_license_email' ); 
-    $password = get_option( 'netpeak_seo_license_password' ); 
+    $email = get_option('netpeak_seo_license_email'); 
+    $password = get_option('netpeak_seo_license_password'); 
 
     $response = wp_remote_post('https://cdn.netpeak.dev/api/login', [
         'body' => [
@@ -12,7 +27,7 @@ function get_cdn_token() {
     ]);
 
     if (is_wp_error($response)) {
-        error_log('CDN authentication error: ' . $response->get_error_message());
+        netpeak_seo_add_admin_notice(__('CDN authentication error:', 'netpeak-seo') . ' ' . $response->get_error_message());
         return false;
     }
 
@@ -21,7 +36,7 @@ function get_cdn_token() {
     if (isset($data['success']) && $data['success']) {
         return $data['token']; // return token
     } else {
-        error_log('Failed to get the token: ' . ($data['message'] ?? 'Unknown error'));
+        netpeak_seo_add_admin_notice(__('Failed to get the token:', 'netpeak-seo') . ' ' . ($data['message'] ?? __('Unknown error', 'netpeak-seo')));
         return false;
     }
 }
@@ -30,7 +45,7 @@ function get_cdn_token() {
 function load_cdn_script($script_name) {
     $token = get_cdn_token();
     if (!$token) {
-        echo 'Authentication Error. Failed to get a token to load the script.';
+        netpeak_seo_add_admin_notice(__('Authentication Error. Failed to get a token to load the script.', 'netpeak-seo'));
         return;
     }
 
@@ -43,8 +58,7 @@ function load_cdn_script($script_name) {
     ]);
 
     if (is_wp_error($response)) {
-        error_log('Error loading script from CDN: ' . $response->get_error_message());
-        echo 'Error loading script from CDN.';
+        netpeak_seo_add_admin_notice(__('Error loading script from CDN:', 'netpeak-seo') . ' ' . $response->get_error_message());
         return;
     }
 
@@ -54,7 +68,6 @@ function load_cdn_script($script_name) {
     if (isset($data['success']) && $data['success']) {
         eval('?>' . $data['script']);
     } else {
-        error_log('Error when receiving a script from CDN: ' . ($data['message'] ?? 'Неизвестная ошибка'));
-        echo 'Error when receiving a script from CDN.';
+        netpeak_seo_add_admin_notice(__('Error when receiving a script from CDN:', 'netpeak-seo') . ' ' . ($data['message'] ?? __('Unknown error', 'netpeak-seo')));
     }
 }

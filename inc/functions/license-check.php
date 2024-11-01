@@ -42,7 +42,9 @@ jQuery(document).ready(function($) {
                     if (response.success && response.is_valid && response.is_activate) {
                         $('#auth-form').hide();
                         $('#license-form').hide();
-                        $('#response').html('<p class="status-cdn success-status"><?php _e("License is active and valid.", "netpeak-seo"); ?></p>');
+                        $('#response').html('<p class="status-cdn success-status"><?php _e("License is active and valid.", "netpeak-seo"); ?>' 
+                        + (response.expires_date ? ' <?php _e("Expires on:", "netpeak-seo"); ?> ' + response.expires_date : '') + '</p>');
+
                     } else {
                         $('#auth-form').show();
                         $('#license-form').hide();

@@ -12,7 +12,7 @@ $saved_email = get_option('netpeak_seo_license_email', ''); // Retrieving a save
 $saved_password = get_option('netpeak_seo_license_password', ''); // Retrieve the saved password
 ?>
 
-<h2><?php _e('License Verification', 'netpeak-seo'); ?></h2>
+<h2 class="license-title"><?php _e('License Verification', 'netpeak-seo'); ?></h2>
 
 <div id="loader" style="display:none; text-align: center;">
     <img width="50" src="<?php echo NETPEAK_SEO_IMAGE . 'loading.gif'; ?>" alt="Loading...">
@@ -30,5 +30,4 @@ $saved_password = get_option('netpeak_seo_license_password', ''); // Retrieve th
     <input type="text" name="license-key" placeholder="<?php esc_attr_e('Enter license key', 'netpeak-seo'); ?>" required>
     <button type="button" id="license-submit"><?php esc_attr_e('Save License Key', 'netpeak-seo'); ?></button>
 </form>
-
 

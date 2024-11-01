@@ -32,13 +32,3 @@ foreach ($options as $option) {
     delete_site_option($option); // Remove options for multisites
 }
 
-//Function for Delete cron event
-function netpeak_clear_license_check_schedule() {
-    $timestamp = wp_next_scheduled('netpeak_license_check_event');
-    if ($timestamp) {
-        wp_unschedule_event($timestamp, 'netpeak_license_check_event');
-    }
-}
-
-//Deleting Cron event
-netpeak_clear_license_check_schedule();
