@@ -21,10 +21,24 @@ $options = array(
     'netpeak_seo_add_slash',
     'netpeak_seo_multislash',
     //Schemas
-    'netpeak_seo_schema_organization_and_person'
+    'netpeak_seo_schema_organization_and_person',
+    //License
+    'netpeak_seo_license_email',
+    'netpeak_seo_license_password'
 );
 // Deleting all options from the database
 foreach ($options as $option) {
     delete_option($option); // Remove the default options
     delete_site_option($option); // Remove options for multisites
 }
+
+//Function for Delete cron event
+function netpeak_clear_license_check_schedule() {
+    $timestamp = wp_next_scheduled('netpeak_license_check_event');
+    if ($timestamp) {
+        wp_unschedule_event($timestamp, 'netpeak_license_check_event');
+    }
+}
+
+//Deleting Cron event
+netpeak_clear_license_check_schedule();
