@@ -29,6 +29,9 @@ function netpeak_register_settings() {
     #License
     register_setting( 'netpeak_seo_license', 'netpeak_seo_license_email' );
     register_setting( 'netpeak_seo_license', 'netpeak_seo_license_password' );
+    register_setting( 'netpeak_seo_license', 'netpeak_seo_license_auth_token' );
+    register_setting( 'netpeak_seo_license', 'netpeak_seo_license_key' );
+    
 
     
 }

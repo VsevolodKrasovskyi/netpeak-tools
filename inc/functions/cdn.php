@@ -71,3 +71,29 @@ function load_cdn_script($script_name) {
         netpeak_seo_add_admin_notice(__('Error when receiving a script from CDN:', 'netpeak-seo') . ' ' . ($data['message'] ?? __('Unknown error', 'netpeak-seo')));
     }
 }
+
+// AJAX handler
+add_action('wp_ajax_save_license_tokens', 'save_license_tokens');
+add_action('wp_ajax_nopriv_save_license_tokens', 'save_license_tokens');
+add_action('wp_ajax_get_license_tokens', 'get_license_tokens');
+add_action('wp_ajax_nopriv_get_license_tokens', 'get_license_tokens');
+
+function save_license_tokens() {
+    if (isset($_POST['authToken']) && isset($_POST['licenseKey'])) {
+        update_option('netpeak_seo_license_auth_token', sanitize_text_field($_POST['authToken']));
+        update_option('netpeak_seo_license_key', sanitize_text_field($_POST['licenseKey']));
+        wp_send_json_success('Tokens saved successfully.');
+    } else {
+        wp_send_json_error('Tokens not provided.');
+    }
+}
+
+function get_license_tokens() {
+    $authToken = get_option('netpeak_seo_license_auth_token', '');
+    $licenseKey = get_option('netpeak_seo_license_key', '');
+
+    wp_send_json_success([
+        'authToken' => $authToken,
+        'licenseKey' => $licenseKey
+    ]);
+}

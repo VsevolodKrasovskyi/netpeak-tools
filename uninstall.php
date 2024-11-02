@@ -24,7 +24,9 @@ $options = array(
     'netpeak_seo_schema_organization_and_person',
     //License
     'netpeak_seo_license_email',
-    'netpeak_seo_license_password'
+    'netpeak_seo_license_password',
+    'netpeak_seo_license_auth_token',
+    'netpeak_seo_license_key'
 );
 // Deleting all options from the database
 foreach ($options as $option) {

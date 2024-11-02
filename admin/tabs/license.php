@@ -10,6 +10,7 @@ function netpeak_save_license_credentials($email, $password) {
 $license_status = 0;
 $saved_email = get_option('netpeak_seo_license_email', ''); // Retrieving a saved email
 $saved_password = get_option('netpeak_seo_license_password', ''); // Retrieve the saved password
+$saved_license_key = get_option( 'netpeak_seo_license_key', '' );
 ?>
 
 <h2 class="license-title"><?php _e('License Verification', 'netpeak-seo'); ?></h2>
@@ -27,7 +28,7 @@ $saved_password = get_option('netpeak_seo_license_password', ''); // Retrieve th
 
 <!-- Form for entering the licence key -->
 <form id="license-form" style="display:none;">
-    <input type="text" name="license-key" placeholder="<?php esc_attr_e('Enter license key', 'netpeak-seo'); ?>" required>
+    <input type="text" name="license-key" placeholder="<?php esc_attr_e('Enter license key', 'netpeak-seo'); ?>" value="<?php echo esc_attr($saved_license_key); ?>" required>
     <button type="button" id="license-submit"><?php esc_attr_e('Save License Key', 'netpeak-seo'); ?></button>
 </form>
 
