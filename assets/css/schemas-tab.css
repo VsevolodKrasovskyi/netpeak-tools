@@ -1,0 +1,26 @@
+table.form-table input[type="text"],
+table.form-table input[type="url"],
+table.form-table input[type="number"],
+table.form-table input[type="checkbox"],
+table.form-table select,
+table.form-table textarea {
+    background-color: #1c2125;
+    color: #ffffff;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 3px;
+    box-sizing: border-box;
+    box-shadow: rgba(0, 0, 0, 0.7) 0px 1px 3px inset;
+}
+
+.switch input:checked+.slider {
+    background-color: #4CAF50;
+}
+
+.slider {
+    background-color: #1c2125;
+}
+
+.title-global-switch h2 {
+    color: white;
+}

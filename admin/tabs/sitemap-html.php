@@ -1,11 +1,6 @@
 <?php
 include NETPEAK_SEO_COMPONENTS_ADMIN . 'tab-header.php';
-
 ?>
-
-
-<h2><?php _e('HTML Maps', 'netpeak-seo');?></h2>
-<p><?php _ex('Here you can configure the HTML settings', 'Sitemap page admin', 'netpeak-seo');?></p>
 
 <div class="wrap wrap-netpeak">
 

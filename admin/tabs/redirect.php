@@ -1,8 +1,6 @@
 <?php
 include NETPEAK_SEO_COMPONENTS_ADMIN . 'tab-header.php';
 ?>
-<h2><?php _e('Basic redirect','netpeak-seo');?></h2>
-
 <?php if (get_option('netpeak_seo_redirect_enable') != 1) : ?>
         <div class="notice notice-warning is-dismissible">
             <p><?php _ex('To configure other options, switch on "Enable redirect GLOBAL" option', 'Sitemap page admin', 'netpeak-seo'); ?>.</p>
@@ -76,4 +74,3 @@ include NETPEAK_SEO_COMPONENTS_ADMIN . 'tab-header.php';
 
     <?php submit_button('Save settings'); ?>
 </form>
-

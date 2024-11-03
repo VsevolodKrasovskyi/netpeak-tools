@@ -2,10 +2,6 @@
 include NETPEAK_SEO_COMPONENTS_ADMIN . 'tab-header.php';
 require_once NETPEAK_SEO_PLUGIN_DIR . 'assets/js/license-switch.php';
 ?>
-<h2><?php _ex('Title and Alt Tag Settings', 'alt title page admin', 'netpeak-seo'); ?></h2>
-<p><?php _ex('Here you can configure the automatic optimization of alt and title attributes for images.', 'alt title page admin', 'netpeak-seo'); ?></p>
-
-
 <div class="wrap wrap-netpeak">
     <form method="post" action="options.php">
         <?php

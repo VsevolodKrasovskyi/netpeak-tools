@@ -44,7 +44,7 @@ function netpeak_seo_add_admin_menu() {
         'netpeak_seo_basic_redirect'                     
     );
 
-    // Tab Basic Redirect
+    // Tab Schema & Structure
     add_submenu_page(
         'netpeak-seo-main',                          
         __( 'Schema & Structure', 'netpeak-seo' ),           
@@ -53,6 +53,7 @@ function netpeak_seo_add_admin_menu() {
         'netpeak-schema-and-structure', // URL           
         'schema_and_structure_page'
     );
+    //License
     add_submenu_page( 
         'netpeak-seo-main',
         __( 'License', 'netpeak-seo' ),           
@@ -82,7 +83,7 @@ function netpeak_seo_basic_redirect() {
 }
 
 function schema_and_structure_page() {
-    include NETPEAK_SEO_PLUGIN_DIR . 'admin/tabs/schema_and_structure.php';
+    include NETPEAK_SEO_PLUGIN_DIR . 'admin/tabs/schemas.php';
 }
 
 function license_page() {

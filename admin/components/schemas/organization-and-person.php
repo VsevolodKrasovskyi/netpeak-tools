@@ -1,8 +1,3 @@
-<?php
-include NETPEAK_SEO_COMPONENTS_ADMIN . 'tab-header.php';
-?>
-<h2><?php _e('Schema & Structure','netpeak-seo');?></h2>
-
 <form method="post" action="">
     <?php
     // Save data
@@ -40,15 +35,15 @@ include NETPEAK_SEO_COMPONENTS_ADMIN . 'tab-header.php';
     $works_for = isset($data['works_for']) ? $data['works_for'] : '';
     $same_as = isset($data['same_as']) ? $data['same_as'] : '';
     ?>
-    <tr valign="top">
-        <th><?php _e('Enable Schema Organization', 'netpeak-seo'); ?></th>
-        <td>
+    <div class="title-global-switch">
+        <h2><?php _e('Enable Global ', 'netpeak-seo'); ?></h2>
+        <div class="global-switch-button">
             <label class="switch">
                 <input type="checkbox" class="global-switch" name="netpeak_seo_schema_organization_and_person" value="1" <?php checked(1, get_option('netpeak_seo_schema_organization_and_person'), true); ?> />
                 <span class="slider"></span>
             </label>
-        </td>
-    </tr>
+        </div>
+    </div>
     <table class="form-table">
         <!-- Data Type -->
         <tr>
