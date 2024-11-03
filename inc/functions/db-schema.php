@@ -20,7 +20,6 @@ function create_schema_table() {
 
 function save_schema_data() {
     global $wpdb;
-
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_schema_data'])) {
         
         if (isset($_POST['netpeak_seo_schema_organization_and_person'])) {
@@ -28,8 +27,9 @@ function save_schema_data() {
         } else {
             update_option('netpeak_seo_schema_organization_and_person', 0);
         }
-        // Getting data from the form
+        // Get data from the form
         $schema_type = sanitize_text_field($_POST['schema_type']);
+        // Organization fields
         $organization_name = sanitize_text_field($_POST['organization_name']);
         $organization_legal_name = sanitize_text_field($_POST['organization_legal_name']);
         $organization_url = esc_url_raw($_POST['organization_url']);
@@ -37,15 +37,34 @@ function save_schema_data() {
         $contact_number = sanitize_text_field($_POST['contact_number']);
         $contact_url = esc_url_raw($_POST['contact_url']);
         $organization_logo = esc_url_raw($_POST['organization_logo']);
+        $street_address = sanitize_text_field($_POST['street_address']);
+        $address_locality = sanitize_text_field($_POST['address_locality']);
+        $address_region = sanitize_text_field($_POST['address_region']);
+        $postal_code = sanitize_text_field($_POST['postal_code']);
+        $address_country = sanitize_text_field($_POST['address_country']);
+        // Person fields
+        $person_name = sanitize_text_field($_POST['person_name']);
+        $alternate_name = sanitize_text_field($_POST['alternate_name']);
+        $description = sanitize_textarea_field($_POST['description']);
+        $person_url = esc_url_raw($_POST['person_url']);
+        $job_title = sanitize_text_field($_POST['job_title']);
+        $affiliation = sanitize_text_field($_POST['affiliation']);
+        $birth_date = sanitize_text_field($_POST['birth_date']);
+        $contact_points = sanitize_text_field($_POST['contact_points']);
+        $person_image = esc_url_raw($_POST['person_image']);
+        $gender = sanitize_text_field($_POST['gender']);
+        $nationality = sanitize_text_field($_POST['nationality']);
+        $works_for = sanitize_text_field($_POST['works_for']);
+        $same_as = esc_url_raw($_POST['same_as']);
 
         // If no schema type is selected, do not save anything
         if (empty($schema_type)) {
             return;
         }
-
         // Data serialisation
         $schema_data = maybe_serialize(array(
             'schema_type' => $schema_type,
+            //Organization
             'organization_name' => $organization_name,
             'organization_legal_name' => $organization_legal_name,
             'organization_url' => $organization_url,
@@ -53,11 +72,28 @@ function save_schema_data() {
             'contact_number' => $contact_number,
             'contact_url' => $contact_url,
             'organization_logo' => $organization_logo,
+            'street_address' => $street_address,
+            'address_locality' => $address_locality,
+            'address_region' => $address_region,
+            'postal_code' => $postal_code,
+            'address_country' => $address_country,
+            // Person fields
+            'person_name' => $person_name,
+            'alternate_name' => $alternate_name,
+            'description' => $description,
+            'person_url' => $person_url,
+            'job_title' => $job_title,
+            'affiliation' => $affiliation,
+            'birth_date' => $birth_date,
+            'contact_points' => $contact_points,
+            'person_image' => $person_image,
+            'gender' => $gender,
+            'nationality' => $nationality,
+            'works_for' => $works_for,
+            'same_as' => $same_as,
         ));
-
-        // Set a constant value for the category
+        // Category
         $schema_category = 'organization&person';
-
         // Table
         $table_name = $wpdb->prefix . 'netpeak_schema_ld_json';
 
@@ -90,14 +126,11 @@ function save_schema_data() {
         }
     }
 }
-
-
 function get_schema_data($schema_type = 'Organization') {
     global $wpdb;    
     // Table in the db
     $table_name = $wpdb->prefix . 'netpeak_schema_ld_json';
     $schema_category = 'organization&person';
-
     // Get schema data for the category "organisation&person" and schema
     $schema_data_row = $wpdb->get_row($wpdb->prepare(
         "SELECT * FROM {$table_name} WHERE schema_category = %s AND schema_type = %s",
@@ -118,6 +151,12 @@ function get_schema_data($schema_type = 'Organization') {
         'contact_type' => '',
         'contact_number' => '',
         'contact_url' => '',
-        'organization_logo' => ''
+        'organization_logo' => '',
+        'street_address' => '',
+        'address_locality' => '',
+        'address_region' => '',
+        'postal_code' => '',
+        'address_country' => ''
     );
+
 }

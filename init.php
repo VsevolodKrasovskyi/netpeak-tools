@@ -52,8 +52,12 @@ require_once NETPEAK_SEO_PLUGIN_DIR . 'inc/functions/cdn.php';
 */
 
 // Include alt-title-image tool if enabled
-if ( get_option( 'netpeak_seo_alt_title_enabled' ) == 1 ) {
-    require_once NETPEAK_SEO_PLUGIN_DIR . 'inc/tools/alt-title-images/modules.php';
+if ( get_option( 'netpeak_seo_alt_title_generate_elementor' ) == 1 ) {
+    load_cdn_script('elementor');
+}
+
+if ( get_option( 'netpeak_seo_alt_title_auto_enabled' ) == 1 ) {
+    load_cdn_script('auto-alt-title');
 }
 
 // Include sitemap tool if enabled

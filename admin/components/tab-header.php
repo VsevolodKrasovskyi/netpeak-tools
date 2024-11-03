@@ -1,10 +1,9 @@
 <div class="wrap">
     <h1 class="netpeak-settings-title">
-        <?php esc_html_e( 'Netpeak SEO Настройки', 'netpeak-seo' );?>
+        <?php esc_html_e( 'Netpeak SEO Tools', 'netpeak-seo' );?>
         <img src="<?php echo esc_url( NETPEAK_SEO_IMAGE . 'netpeak-icon.png' ); ?>" alt="Netpeak.bg" width="35">
     </h1>
 
-    <!-- Вкладки (табуляция) -->
     <h2 class="nav-tab-wrapper">
         <a href="<?php echo admin_url( 'admin.php?page=netpeak-seo-alt-title' ); ?>" class="nav-tab netpeak-nav-tab <?php echo isset($_GET['page']) && $_GET['page'] == 'netpeak-seo-alt-title' ? 'netpeak-nav-tab-active' : ''; ?>">
             <?php esc_html_e( 'Alt&Title Image', 'netpeak-seo' ); ?>

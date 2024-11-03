@@ -55,7 +55,6 @@ jQuery(document).ready(function($) {
             });
         }
     }
-
     function validateLicense(authToken, licenseKey) {
         try {
             showLoader();
@@ -203,3 +202,6 @@ jQuery(document).ready(function($) {
 
 });
 </script>
+
+
+

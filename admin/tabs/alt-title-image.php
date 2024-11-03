@@ -1,5 +1,6 @@
 <?php
 include NETPEAK_SEO_COMPONENTS_ADMIN . 'tab-header.php';
+require_once NETPEAK_SEO_PLUGIN_DIR . 'assets/js/license-switch.php';
 ?>
 <h2><?php _ex('Title and Alt Tag Settings', 'alt title page admin', 'netpeak-seo'); ?></h2>
 <p><?php _ex('Here you can configure the automatic optimization of alt and title attributes for images.', 'alt title page admin', 'netpeak-seo'); ?></p>
@@ -26,7 +27,7 @@ include NETPEAK_SEO_COMPONENTS_ADMIN . 'tab-header.php';
             <tr valign="top">
                 <th><?php _ex('Addon for Elementor', 'alt title page admin', 'netpeak-seo'); ?></th>
                 <td>
-                    <label class="switch switch-disable">
+                    <label class="switch licensed-feature">
                         <input type="checkbox" class="dependent-checkbox" name="netpeak_seo_alt_title_generate_elementor" value="1" <?php checked(1, get_option('netpeak_seo_alt_title_generate_elementor'), true); ?> />
                         <span class="slider"></span>
                     </label>
@@ -43,7 +44,7 @@ include NETPEAK_SEO_COMPONENTS_ADMIN . 'tab-header.php';
             <tr valign="top">
                 <th><?php _ex('Enable Auto Genetare Atl&Title', 'alt title page admin', 'netpeak-seo'); ?></th>
                 <td>
-                    <label class="switch switch-disable">
+                    <label class="switch licensed-feature">
                         <input type="checkbox" class="dependent-checkbox" name="netpeak_seo_alt_title_auto_enabled" value="1" <?php checked(1, get_option('netpeak_seo_alt_title_auto_enabled'), true); ?> />
                         <span class="slider"></span>
                     </label>
