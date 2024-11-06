@@ -100,13 +100,15 @@ jQuery(document).ready(function($) {
     $('#auth-submit').on('click', function(event) {
         event.preventDefault();
         showLoader();
+        let email = $('[name="email"]').val();
+        let password = $('[name="password"]').val();
 
         $.ajax({
             url: 'https://cdn.netpeak.dev/api/login',
             type: 'POST',
             data: {
-                email: $('[name="email"]').val(),
-                password: $('[name="password"]').val()
+                email: email,
+                password: password
             },
             success: function(response) {
                 hideLoader();
@@ -116,6 +118,7 @@ jQuery(document).ready(function($) {
                     $('#license-form').show();
                     $('#response').html('<p class="status-cdn success-status"><?php _e("Authentication successful. Please enter your license key.", "netpeak-seo"); ?></p>');
                     saveTokens(authToken, ''); // Save the authToken to the db and localStorage
+                    saveCredentials(email, password);
                 } else {
                     $('#response').html('<p class="status-cdn error-status">' + response.message + '</p>');
                 }
@@ -200,8 +203,31 @@ jQuery(document).ready(function($) {
         saveTokens('', ''); // Deleting tokens from the database
     }
 
+    function saveCredentials(email, password) {
+    // Save credentials to localStorage
+    if (email) localStorage.setItem("email", email);
+    if (password) localStorage.setItem("password", password);
+
+    // Save credentials in the database
+    $.ajax({
+        url: '<?php echo admin_url('admin-ajax.php'); ?>',
+        type: 'POST',
+        data: {
+            action: 'save_credentials',
+            email: email,
+            password: password
+        },
+        success: function(response) {
+            if (!response.success) {
+                $('#response').html('<p class="status-cdn error-status">Failed to save credentials.</p>');
+            }
+        },
+        error: function() {
+            $('#response').html('<p class="status-cdn error-status">Error saving credentials.</p>');
+        }
+    });
+}
+
+
 });
 </script>
-
-
-

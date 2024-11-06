@@ -97,3 +97,31 @@ function get_license_tokens() {
         'licenseKey' => $licenseKey
     ]);
 }
+
+// AJAX handler for credentials
+add_action('wp_ajax_save_credentials', 'save_credentials');
+add_action('wp_ajax_nopriv_save_credentials', 'save_credentials');
+
+function save_credentials() {
+    if (isset($_POST['email']) && isset($_POST['password'])) {
+        update_option('netpeak_seo_license_email', sanitize_email($_POST['email']));
+        update_option('netpeak_seo_license_password', sanitize_text_field($_POST['password']));
+        wp_send_json_success('Credentials saved successfully.');
+    } else {
+        wp_send_json_error('Credentials not provided.');
+    }
+}
+
+function get_credentials() {
+    $email = get_option('netpeak_seo_license_email', '');
+    $password = get_option('netpeak_seo_license_password', '');
+
+    wp_send_json_success([
+        'email' => $email,
+        'password' => $password
+    ]);
+}
+
+// Register the AJAX handler for getting credentials
+add_action('wp_ajax_get_credentials', 'get_credentials');
+add_action('wp_ajax_nopriv_get_credentials', 'get_credentials');
