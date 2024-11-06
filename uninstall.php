@@ -33,4 +33,5 @@ foreach ($options as $option) {
     delete_option($option); // Remove the default options
     delete_site_option($option); // Remove options for multisites
 }
-
+global $wpdb;
+$wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '%netpeak_seo%'");

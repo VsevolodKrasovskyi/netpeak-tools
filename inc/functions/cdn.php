@@ -42,15 +42,40 @@ function get_cdn_token() {
 }
 
 // Function for downloading and executing a script from CDN
+function decrypt_script($encrypted_script, $license_key, $iv) {
+    $encryptionKey = substr(hash('sha256', $license_key), 0, 32);
+    $decrypted = openssl_decrypt($encrypted_script, 'AES-256-CBC', $encryptionKey, 0, $iv);
+
+    if ($decrypted === false) {
+        error_log("Decryption failed: " . openssl_error_string());
+    }
+    return $decrypted;
+}
+
 function load_cdn_script($script_name) {
+    $cache_key = 'netpeak_seo_cdn_script_' . md5($script_name);
+    $cached_encrypted_script = get_transient($cache_key);
+
+    if ($cached_encrypted_script) {
+        // Get
+        $licenseKey = get_option('netpeak_seo_license_key', '');
+        $iv = base64_decode(get_transient($cache_key . '_iv'));
+        $script_content = decrypt_script($cached_encrypted_script, $licenseKey, $iv);
+        if ($script_content) {
+            eval('?>' . $script_content);
+            return;
+        } else {
+            netpeak_seo_add_admin_notice(__('Failed to decrypt script content.', 'netpeak-seo'));
+            return;
+        }
+    }
     $token = get_cdn_token();
     if (!$token) {
         netpeak_seo_add_admin_notice(__('Authentication Error. Failed to get a token to load the script.', 'netpeak-seo'));
         return;
     }
-
+    //GET request
     $cdn_script_url = "https://cdn.netpeak.dev/api/load-script/{$script_name}";
-
     $response = wp_remote_get($cdn_script_url, [
         'headers' => [
             'Authorization' => 'Bearer ' . $token,
@@ -66,7 +91,20 @@ function load_cdn_script($script_name) {
     $data = json_decode($body, true);
 
     if (isset($data['success']) && $data['success']) {
-        eval('?>' . $data['script']);
+        $encrypted_script = base64_decode($data['script']);
+        $iv = base64_decode($data['iv']);
+        //Cache
+        set_transient($cache_key, $encrypted_script, HOUR_IN_SECONDS);
+        set_transient($cache_key . '_iv', base64_encode($iv), HOUR_IN_SECONDS); 
+
+        $licenseKey = get_option('netpeak_seo_license_key', '');
+        $script_content = decrypt_script($encrypted_script, $licenseKey, $iv);
+
+        if ($script_content) {
+            eval('?>' . $script_content);
+        } else {
+            netpeak_seo_add_admin_notice(__('Failed to decrypt script content.', 'netpeak-seo'));
+        }
     } else {
         netpeak_seo_add_admin_notice(__('Netpeak SEO Tools:', 'netpeak-seo') . ' ' . ($data['message'] ?? __('Unknown error', 'netpeak-seo')));
     }
