@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Plugin Name: Netpeak SEO Tools
  * Description: Basic SEO settings, HTML map generation, and more
@@ -10,8 +9,8 @@
  * Requires at least: 5.7
  * Requires PHP: 7.0
  * License: GPL2
- * License URI: https://www.gnu.org/licenses/gpl-2.0.html
- * Version: 1.0
+ * License URI: https://cdn.netpeak.dev/
+ * Version: 1.0.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

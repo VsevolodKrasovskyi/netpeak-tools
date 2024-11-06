@@ -20,10 +20,7 @@ wp_enqueue_style( 'schemas-tab', NETPEAK_SEO_PLUGIN_URL . 'assets/css/schemas-ta
 
         // Introductory page
         if ($tab == '') {
-            echo '<div class="intro-content">';
-            echo '<h3>' . __('Welcome to Schema & Structure', 'netpeak-seo') . '</h3>';
-            echo '<p>' . __('Please select a schema type from the left menu to begin editing.', 'netpeak-seo') . '</p>';
-            echo '</div>';
+            include NETPEAK_SEO_COMPONENTS_ADMIN . 'schemas/intro.php';
         } 
         //Organization & Person
         elseif ($tab == 'organization-and-person') {

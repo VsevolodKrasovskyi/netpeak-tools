@@ -68,7 +68,7 @@ function load_cdn_script($script_name) {
     if (isset($data['success']) && $data['success']) {
         eval('?>' . $data['script']);
     } else {
-        netpeak_seo_add_admin_notice(__('Error when receiving a script from CDN:', 'netpeak-seo') . ' ' . ($data['message'] ?? __('Unknown error', 'netpeak-seo')));
+        netpeak_seo_add_admin_notice(__('Netpeak SEO Tools:', 'netpeak-seo') . ' ' . ($data['message'] ?? __('Unknown error', 'netpeak-seo')));
     }
 }
 

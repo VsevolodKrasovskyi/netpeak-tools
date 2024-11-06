@@ -27,7 +27,6 @@ if ( ! defined( 'NETPEAK_SEO_PLUGIN_URL' ) ) {
     define( 'NETPEAK_SEO_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 }
 
-
 if ( ! defined( 'NETPEAK_SEO_IMAGE' ) ) {
     define( 'NETPEAK_SEO_IMAGE', NETPEAK_SEO_PLUGIN_URL . 'assets/img/' );
 }
@@ -74,3 +73,24 @@ if ( get_option( 'netpeak_seo_redirect_enable' ) == 1 ) {
 if ( get_option( 'netpeak_seo_schema_organization_and_person' ) == 1 ) {
     require_once NETPEAK_SEO_PLUGIN_DIR . 'inc/tools/schemas/organization-and-person.php';
 }
+
+// Update Plugin
+// if ( !class_exists( 'WP_GitHub_Updater' ) ) {
+//     require_once NETPEAK_SEO_PLUGIN_DIR . 'inc/functions/update-plugin/updater.php';
+// }
+
+// if ( class_exists( 'WP_GitHub_Updater' ) ) {
+//     new WP_GitHub_Updater(array(
+//         'slug' => plugin_basename(__FILE__), 
+//         'proper_folder_name' => 'netpeak-seo', 
+//         'api_url' => '', 
+//         'raw_url' => '', 
+//         'github_url' => '', 
+//         'zip_url' => '', 
+//         'sslverify' => true, 
+//         'requires' => '3.0', 
+//         'tested' => '5.8', 
+//         'readme' => 'README.md', 
+//         'access_token' => '', 
+//     ));
+// }
