@@ -19,7 +19,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 require plugin_dir_path( __FILE__ ) . 'init.php';
 
-
 function netpeak_seo_register_textdomain() {
     $domain = 'netpeak-seo';
     $locale = determine_locale();
