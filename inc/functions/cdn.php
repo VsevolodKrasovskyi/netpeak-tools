@@ -42,39 +42,37 @@ function get_cdn_token() {
 }
 
 // Function for downloading and executing a script from CDN
-function decrypt_script($encrypted_script, $license_key, $iv) {
-    $encryptionKey = substr(hash('sha256', $license_key), 0, 32);
-    $decrypted = openssl_decrypt($encrypted_script, 'AES-256-CBC', $encryptionKey, 0, $iv);
-
-    if ($decrypted === false) {
-        error_log("Decryption failed: " . openssl_error_string());
-    }
-    return $decrypted;
-}
-
 function load_cdn_script($script_name) {
-    $cache_key = 'netpeak_seo_cdn_script_' . md5($script_name);
-    $cached_encrypted_script = get_transient($cache_key);
+    $cacheManager = new \NetpeakSEO\CacheManager(WP_CONTENT_DIR . '/netpeak_seo_cache/cdn');
 
-    if ($cached_encrypted_script) {
-        // Get
-        $licenseKey = get_option('netpeak_seo_license_key', '');
-        $iv = base64_decode(get_transient($cache_key . '_iv'));
-        $script_content = decrypt_script($cached_encrypted_script, $licenseKey, $iv);
-        if ($script_content) {
-            eval('?>' . $script_content);
-            return;
-        } else {
-            netpeak_seo_add_admin_notice(__('Failed to decrypt script content.', 'netpeak-seo'));
+    $license_key = get_option('netpeak_seo_license_key');
+    if (!$license_key) {
+        netpeak_seo_add_admin_notice(__('License key is missing. Unable to load the script.', 'netpeak-seo'));
+        return;
+    }
+
+    $cache_key = 'netpeak_seo_cdn_script_' . md5($script_name);
+    $cached_data = $cacheManager->get($cache_key);
+
+    // If the script is in the cache, check its integrity and use
+    if ($cached_data) {
+        $cached_hash = $cacheManager->get($cache_key . '_hash');
+        $decrypted_script = openssl_decrypt($cached_data, 'AES-256-CBC', $license_key, 0, substr($license_key, 0, 16));
+
+        if ($decrypted_script && hash('sha256', $decrypted_script) === $cached_hash) {
+            //netpeak_seo_add_admin_notice(__('Using cached script.', 'netpeak-seo'));
+            eval('?>' . $decrypted_script);
             return;
         }
     }
+
+    // If the script is not found in the cache, request it from the CDN
     $token = get_cdn_token();
     if (!$token) {
         netpeak_seo_add_admin_notice(__('Authentication Error. Failed to get a token to load the script.', 'netpeak-seo'));
         return;
     }
-    //GET request
+
     $cdn_script_url = "https://cdn.netpeak.dev/api/load-script/{$script_name}";
     $response = wp_remote_get($cdn_script_url, [
         'headers' => [
@@ -91,24 +89,20 @@ function load_cdn_script($script_name) {
     $data = json_decode($body, true);
 
     if (isset($data['success']) && $data['success']) {
-        $encrypted_script = base64_decode($data['script']);
-        $iv = base64_decode($data['iv']);
-        //Cache
-        set_transient($cache_key, $encrypted_script, HOUR_IN_SECONDS);
-        set_transient($cache_key . '_iv', base64_encode($iv), HOUR_IN_SECONDS); 
+        $script_content = $data['script'];
+        $encrypted_script = openssl_encrypt($script_content, 'AES-256-CBC', $license_key, 0, substr($license_key, 0, 16));
+        $hash = hash('sha256', $script_content);
 
-        $licenseKey = get_option('netpeak_seo_license_key', '');
-        $script_content = decrypt_script($encrypted_script, $licenseKey, $iv);
+        // Save the encrypted script and its hash to the cache
+        $cacheManager->set($cache_key, $encrypted_script, HOUR_IN_SECONDS);
+        $cacheManager->set($cache_key . '_hash', $hash, HOUR_IN_SECONDS);
 
-        if ($script_content) {
-            eval('?>' . $script_content);
-        } else {
-            netpeak_seo_add_admin_notice(__('Failed to decrypt script content.', 'netpeak-seo'));
-        }
+        eval('?>' . $script_content);
     } else {
         netpeak_seo_add_admin_notice(__('Netpeak SEO Tools:', 'netpeak-seo') . ' ' . ($data['message'] ?? __('Unknown error', 'netpeak-seo')));
     }
 }
+
 
 // AJAX handler
 add_action('wp_ajax_save_license_tokens', 'save_license_tokens');

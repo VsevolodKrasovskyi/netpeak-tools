@@ -41,6 +41,7 @@ if ( is_admin() ) {
 require_once NETPEAK_SEO_PLUGIN_DIR . 'inc/functions/register-setting.php';
 require_once NETPEAK_SEO_PLUGIN_DIR . 'inc/functions/db-schema.php';
 require_once NETPEAK_SEO_PLUGIN_DIR . 'inc/functions/cdn.php';
+require_once NETPEAK_SEO_PLUGIN_DIR . 'inc/functions/CacheManager.php';
 
 
 /*
@@ -74,23 +75,3 @@ if ( get_option( 'netpeak_seo_schema_organization_and_person' ) == 1 ) {
     require_once NETPEAK_SEO_PLUGIN_DIR . 'inc/tools/schemas/organization-and-person.php';
 }
 
-// Update Plugin
-// if ( !class_exists( 'WP_GitHub_Updater' ) ) {
-//     require_once NETPEAK_SEO_PLUGIN_DIR . 'inc/functions/update-plugin/updater.php';
-// }
-
-// if ( class_exists( 'WP_GitHub_Updater' ) ) {
-//     new WP_GitHub_Updater(array(
-//         'slug' => plugin_basename(__FILE__), 
-//         'proper_folder_name' => 'netpeak-seo', 
-//         'api_url' => '', 
-//         'raw_url' => '', 
-//         'github_url' => '', 
-//         'zip_url' => '', 
-//         'sslverify' => true, 
-//         'requires' => '3.0', 
-//         'tested' => '5.8', 
-//         'readme' => 'README.md', 
-//         'access_token' => '', 
-//     ));
-// }

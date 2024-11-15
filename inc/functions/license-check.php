@@ -75,10 +75,26 @@ jQuery(document).ready(function($) {
                         $('#license-form').hide();
                         $('#response').html('<p class="status-cdn success-status"><?php _e("License is active and valid.", "netpeak-seo"); ?>' 
                         + (response.expires_date ? ' <?php _e("Expires on:", "netpeak-seo"); ?> ' + response.expires_date : '') + '</p>');
-                    } else {
+                    
+                    }
+                    else if(response.is_valid = '0')
+                    {
+                        $('#auth-form').hide();
+                        $('#license-form').hide();
+                        $('#response').html('<p class="status-cdn error-status"><?php _e("License is invalid.", "netpeak-seo"); ?></p>');
+                        removeTokens();
+                    } 
+                    else if(response.is_activate = '0')
+                    {
                         $('#auth-form').show();
                         $('#license-form').hide();
-                        $('#response').html('<p class="status-cdn error-status"><?php _e("License is inactive or invalid.", "netpeak-seo"); ?></p>');
+                        $('#response').html('<p class="status-cdn error-status"><?php _e("License is inactive. Please activate your licence", "netpeak-seo"); ?></p>');
+                        removeTokens();
+                    }
+                    else {
+                        $('#auth-form').hide();
+                        $('#license-form').hide();
+                        $('#response').html('<p class="status-cdn error-status"><?php _e("License is inactive or invalid. Check your account ", "netpeak-seo"); ?></p>');
                         removeTokens();
                     }
                 },

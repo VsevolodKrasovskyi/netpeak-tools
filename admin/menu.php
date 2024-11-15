@@ -10,8 +10,8 @@ function netpeak_seo_add_admin_menu() {
         __( 'Netpeak SEO', 'netpeak-seo' ),              
         'manage_options',                                
         'netpeak-seo-main',                              
-        'netpeak_seo_alt_title_page',                    
-        NETPEAK_SEO_IMAGE . 'netpeak-icon.svg',
+        'license_page',                  
+        NETPEAK_SEO_IMAGE . 'netpeak-icon.svg'
     );
 
     // Tab Alt&Title Image
@@ -70,6 +70,7 @@ add_action( 'admin_menu', 'netpeak_seo_add_admin_menu' );
  * @category tabs
  * @author Netpeak Dev
 */
+
 function netpeak_seo_alt_title_page() {
     include NETPEAK_SEO_PLUGIN_DIR . 'admin/tabs/alt-title-image.php';
 }

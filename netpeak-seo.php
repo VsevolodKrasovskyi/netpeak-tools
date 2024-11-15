@@ -3,12 +3,12 @@
  * Plugin Name: Netpeak SEO Tools
  * Description: Basic SEO settings, HTML map generation, and more
  * Author: Netpeak Dev Team
- * Author URI: https://netpeak.bg/
+ * Author URI: https://netpeak.dev/
  * Text Domain: netpeak-seo
  * Domain Path: /languages
  * Requires at least: 5.7
  * Requires PHP: 7.0
- * License: GPL2
+ * License: Subscription-based License
  * License URI: https://cdn.netpeak.dev/
  * Version: 1.0.0
  */
