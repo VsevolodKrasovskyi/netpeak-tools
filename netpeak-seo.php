@@ -12,17 +12,29 @@
  * License URI: https://cdn.netpeak.dev/license-information
  * Version: 1.0.2
  */
-if (is_admin()) {
-    define('GH_REQUEST_URI', 'https://api.github.com/repos/%s/%s/releases');
-    define('GHPU_USERNAME', 'VsevolodKrasovskyi'); 
-    define('GHPU_REPOSITORY', 'netpeak-tools'); 
-    
-    include_once plugin_dir_path(__FILE__) . 'inc/functions/updater.php';  
-
-    $updater = new GhPluginUpdater(__FILE__);
-    $updater->init();
+if ( ! class_exists( 'WP_GitHub_Updater' ) ) {
+    include_once plugin_dir_path( __FILE__ ) . 'inc/functions/updater.php'; 
 }
 
+if ( class_exists( 'WP_GitHub_Updater' ) ) {
+    new WP_GitHub_Updater(array(
+        'slug' => plugin_basename( __FILE__ ),
+        'proper_folder_name' => dirname( plugin_basename( __FILE__ ) ),
+        'api_url' => 'https://api.github.com/repos/VsevolodKrasovskyi/netpeak-tools', 
+        'raw_url' => 'https://raw.githubusercontent.com/VsevolodKrasovskyi/netpeak-tools/prod', 
+        'github_url' => 'https://github.com/VsevolodKrasovskyi/netpeak-tools', 
+        'zip_url' => 'https://github.com/VsevolodKrasovskyi/netpeak-tools/zipball/prod', 
+        'sslverify' => true, 
+        'requires' => '3.0', 
+        'tested' => '6.0', 
+        'readme' => 'README.md', 
+        'access_token' => '', 
+        'screenshots' => array(
+            'https://raw.githubusercontent.com/VsevolodKrasovskyi/netpeak-tools/prod/changelog/screenshots/screenshot1.png',
+            'https://raw.githubusercontent.com/VsevolodKrasovskyi/netpeak-tools/prod/changelog/screenshots/screenshot2.png',
+        ),
+    ));
+}
 
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -31,15 +43,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 require plugin_dir_path( __FILE__ ) . 'init.php';
 
-function netpeak_seo_register_textdomain() {
-    $domain = 'netpeak-seo';
-    $locale = determine_locale();
-    $mofile = plugin_dir_path( __FILE__ ) . "languages/{$domain}-{$locale}.mo";
-    if ( file_exists( $mofile ) ) {
-        load_textdomain( $domain, $mofile );
-    }
+
+/*
+* Load plugin textdomain.
+*/
+function netpeak_load_textdomain() {
+  load_plugin_textdomain( 'netpeak-seo', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' ); 
 }
-add_action( 'plugins_loaded', 'netpeak_seo_register_textdomain', 1000 );
+add_action( 'init', 'netpeak_load_textdomain' );
 
 // Hooks
 register_activation_hook(__FILE__, 'create_schema_table');

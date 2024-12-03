@@ -33,32 +33,12 @@ foreach ($options as $option) {
     delete_option($option); // Remove the default options
     delete_site_option($option); // Remove options for multisites
 }
-
-function clear_cache_directory($dir) {
-    if (is_dir($dir)) {
-        $files = scandir($dir);
-        foreach ($files as $file) {
-            if ($file !== '.' && $file !== '..') {
-                $file_path = $dir . DIRECTORY_SEPARATOR . $file;
-                if (is_dir($file_path)) {
-                    clear_cache_directory($file_path);
-                    rmdir($file_path);
-                } else {
-                    unlink($file_path);
-                }
-            }
-        }
-    }
-}
-
-$cache_dir = WP_CONTENT_DIR . '/netpeak_seo_cache';
-clear_cache_directory($cache_dir);
-
-
+//Delete table
 global $wpdb;
 $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '%netpeak%'");
+//Clear cache directory
+require_once plugin_dir_path(__FILE__) . 'inc/functions/CacheManager.php';
+use NetpeakSEO\CacheManager;
 
-// $delete_table_schema = $wpdb->prefix . 'netpeak_schema_ld_json';
-// if ($wpdb->get_var("SHOW TABLES LIKE '$delete_table_schema'") === $delete_table_schema) {
-//     $wpdb->query("DROP TABLE IF EXISTS $delete_table_schema");
-// }
+$cacheManager = new CacheManager();
+$cacheManager->clear();

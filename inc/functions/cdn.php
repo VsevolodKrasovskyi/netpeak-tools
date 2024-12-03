@@ -1,4 +1,7 @@
 <?php
+
+use NetpeakSEO\CacheManager;
+
 // Function for adding a message to admin_notices
 function netpeak_seo_add_admin_notice($message, $type = 'error') {
     set_transient('netpeak_seo_admin_notice', ['message' => $message, 'type' => $type], 30);
@@ -43,11 +46,12 @@ function get_cdn_token() {
 
 // Function for downloading and executing a script from CDN
 function load_cdn_script($script_name) {
-    $cacheManager = new \NetpeakSEO\CacheManager(WP_CONTENT_DIR . '/netpeak_seo_cache/cdn');
+    $cacheManager = new CacheManager(WP_CONTENT_DIR . '/cache/netpeak_tools/cdn');
 
     $license_key = get_option('netpeak_seo_license_key');
     if (!$license_key) {
         netpeak_seo_add_admin_notice(__('License key is missing. Unable to load the script.', 'netpeak-seo'));
+        $cacheManager->clear();
         return;
     }
 
@@ -82,6 +86,7 @@ function load_cdn_script($script_name) {
 
     if (is_wp_error($response)) {
         netpeak_seo_add_admin_notice(__('Error loading script from CDN:', 'netpeak-seo') . ' ' . $response->get_error_message());
+        $cacheManager->clear();
         return;
     }
 

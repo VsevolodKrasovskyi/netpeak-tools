@@ -36,12 +36,9 @@ jQuery(document).ready(function($) {
         const licenseKey = localStorage.getItem("licenseKey");
 
         if (!authToken || !licenseKey) {
-            console.error("No auth token or license key found in localStorage.");
             disableLicensedFeatures();
             return;
         }
-
-        console.log("Sending request to CDN with authToken and licenseKey");
 
         $.ajax({
             url: 'https://cdn.netpeak.dev/api/check-license-status',
@@ -54,7 +51,6 @@ jQuery(document).ready(function($) {
                 domain: document.domain
             },
             success: function(response) {
-                console.log("Received response from CDN:", response);
                 if (response.success && response.is_valid && response.is_activate) {
                     enableLicensedFeatures();
                 } else {
@@ -62,7 +58,6 @@ jQuery(document).ready(function($) {
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
-                console.error("Error checking license status from CDN:", textStatus, errorThrown);
                 disableLicensedFeatures();
             }
         });
@@ -82,7 +77,6 @@ jQuery(document).ready(function($) {
         });
     }
 
-    // Проверяем лицензию при загрузке страницы
     checkLicenseStatusFromCDN();
 });
 

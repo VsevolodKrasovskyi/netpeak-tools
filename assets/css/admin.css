@@ -278,3 +278,8 @@ input:checked+.slider:before {
 .mail-settings--test-email .button-primary:hover {
     background-color: #005177;
 }
+
+/* Api plugin */
+img.screenshot-changelog {
+    width: 100%;
+}

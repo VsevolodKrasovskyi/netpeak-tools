@@ -2,7 +2,7 @@
 include NETPEAK_SEO_COMPONENTS_ADMIN . 'tab-header.php';
 require_once NETPEAK_SEO_PLUGIN_DIR . 'assets/js/license-switch.php';
 ?>
-<div class="wrap wrap-netpeak">
+<div class="wrap wrap-netpeak licensed-feature">
     <form method="post" action="options.php">
         <?php
         settings_fields( 'netpeak_seo_alt_title_settings' );
@@ -14,13 +14,13 @@ require_once NETPEAK_SEO_PLUGIN_DIR . 'assets/js/license-switch.php';
                 <th><?php _ex('Enable Atl Title module', 'alt title page admin', 'netpeak-seo'); ?></th>
                 <td>
                     <label class="switch">
-                        <input type="checkbox" class="global-switch" name="netpeak_seo_alt_title_enabled" value="1" <?php checked(1, get_option('netpeak_seo_alt_title_enabled'), true); ?> />
+                        <input type="checkbox" class="global-switch dependent-checkbox" name="netpeak_seo_alt_title_enabled" value="1" <?php checked(1, get_option('netpeak_seo_alt_title_enabled'), true); ?> />
                         <span class="slider"></span>
                     </label>
                 </td>
             </tr>
             <!-- Elementor integration -->
-            <tr valign="top" class="licensed-feature">
+            <tr valign="top">
                 <th><?php _ex('Addon for Elementor', 'alt title page admin', 'netpeak-seo'); ?></th>
                 <td>
                     <label class="switch ">
@@ -37,7 +37,7 @@ require_once NETPEAK_SEO_PLUGIN_DIR . 'assets/js/license-switch.php';
                 </td>
             </tr>
             <!-- Enable automatic Atl&Title -->
-            <tr valign="top" class="licensed-feature">
+            <tr valign="top">
                 <th><?php _ex('Enable Auto Genetare Atl&Title', 'alt title page admin', 'netpeak-seo'); ?></th>
                 <td>
                     <label class="switch">

@@ -2,7 +2,7 @@
 
 /*
 * Cache
-* @since 1.0.3
+* @since 1.0.2
 */
 
 namespace NetpeakSEO;
@@ -12,7 +12,7 @@ class CacheManager {
 
     public function __construct($cacheRootDir = null) {
         // The main directory for the cache (if not specified, defaults to wp-content/netpeak_seo_cache)
-        $this->cacheRootDir = $cacheRootDir ?: WP_CONTENT_DIR . '/netpeak_seo_cache';
+        $this->cacheRootDir = $cacheRootDir ?: WP_CONTENT_DIR . '/cache/netpeak_tools/cdn';
         if (!file_exists($this->cacheRootDir)) {
             wp_mkdir_p($this->cacheRootDir);
         }

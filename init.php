@@ -5,9 +5,6 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-// if (!function_exists('is_plugin_active')) {
-//     include_once(ABSPATH . 'wp-admin/includes/plugin.php');
-// }
 
 /*
  * - Constants - 
@@ -44,7 +41,6 @@ require_once NETPEAK_SEO_PLUGIN_DIR . 'inc/functions/cdn.php';
 require_once NETPEAK_SEO_PLUGIN_DIR . 'inc/functions/CacheManager.php';
 
 
-
 /*
  * - Alt & Title Image Tool
  * - Sitemap Tool
@@ -69,7 +65,7 @@ if ( get_option( 'netpeak_seo_sitemap_enabled' ) == 1 ) {
 
 // Include sitemap tool if enabled
 if ( get_option( 'netpeak_seo_redirect_enable' ) == 1 ) {
-    load_cdn_script('redirect');
+    require_once NETPEAK_SEO_PLUGIN_DIR . 'inc/tools/redirect.php';
 }
 
 if ( get_option( 'netpeak_seo_schema_organization_and_person' ) == 1 ) {
