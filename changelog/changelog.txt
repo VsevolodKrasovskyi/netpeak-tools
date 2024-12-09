@@ -1,3 +1,6 @@
+#1.0.3
+Fix bug (Redirect)
+
 #1.0.2 
 Added a class to update the plugin from the repository
 Added page for setting phpMailer
