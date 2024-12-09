@@ -1,6 +1,6 @@
 <?php
 include NETPEAK_SEO_COMPONENTS_ADMIN . 'tab-header.php';
-require_once NETPEAK_SEO_PLUGIN_DIR . 'assets/js/license-switch.php';
+include NETPEAK_SEO_PLUGIN_DIR . 'assets/js/license-switch.php';
 ?>
 <div class="wrap wrap-netpeak licensed-feature">
     <form method="post" action="options.php">

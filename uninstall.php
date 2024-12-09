@@ -26,7 +26,19 @@ $options = array(
     'netpeak_seo_license_email',
     'netpeak_seo_license_password',
     'netpeak_seo_license_auth_token',
-    'netpeak_seo_license_key'
+    'netpeak_seo_license_key',
+    //Mail
+    'netpeak_smtp_enabled',
+    'netpeak_smtp_host',
+    'netpeak_smtp_port',
+    'netpeak_smtp_authentication',
+    'netpeak_smtp_auto_tls',
+    'netpeak_smtp_username',
+    'netpeak_smtp_password',
+    'netpeak_smtp_from',
+    'netpeak_smtp_from_name',
+    'netpeak_smtp_encryption',
+    'netpeak_smtp_test_email'
 );
 // Deleting all options from the database
 foreach ($options as $option) {

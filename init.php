@@ -5,7 +5,6 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-
 /*
  * - Constants - 
  * @author Netpeak Dev
@@ -39,37 +38,37 @@ require_once NETPEAK_SEO_PLUGIN_DIR . 'inc/functions/register-setting.php';
 require_once NETPEAK_SEO_PLUGIN_DIR . 'inc/functions/db-schema.php';
 require_once NETPEAK_SEO_PLUGIN_DIR . 'inc/functions/cdn.php';
 require_once NETPEAK_SEO_PLUGIN_DIR . 'inc/functions/CacheManager.php';
-
-
 /*
  * - Alt & Title Image Tool
  * - Sitemap Tool
  * - Redirect Tool
  * - Mail Settings
- * @since 1.0.0
+ * @since 1.0.2
 */
-load_cdn_script('mail');
 
-if ( get_option( 'netpeak_seo_alt_title_generate_elementor' ) == 1 ) {
-    load_cdn_script('elementor');
+
+$cdn_options = [
+    'netpeak_smtp_enabled' => 'mail',
+    'netpeak_seo_alt_title_generate_elementor' => 'elementor',
+    'netpeak_seo_alt_title_auto_enabled' => 'auto-alt-title',
+];
+
+foreach ($cdn_options as $option => $script) {
+    if (get_option($option) == 1) {
+        load_cdn_script($script);
+    }
 }
 
-if ( get_option( 'netpeak_seo_alt_title_auto_enabled' ) == 1 ) {
-    load_cdn_script('auto-alt-title');
-}
+$tools = [
+    'netpeak_seo_sitemap_enabled' => 'inc/tools/sitemap.php',
+    'netpeak_seo_redirect_enable' => 'inc/tools/redirect.php',
+    'netpeak_seo_schema_organization_and_person' => 'inc/tools/schemas/organization-and-person.php',
+];
 
-// Include sitemap tool if enabled
-if ( get_option( 'netpeak_seo_sitemap_enabled' ) == 1 ) {
-    require_once NETPEAK_SEO_PLUGIN_DIR . 'inc/tools/sitemap.php';
-}
-
-// Include sitemap tool if enabled
-if ( get_option( 'netpeak_seo_redirect_enable' ) == 1 ) {
-    require_once NETPEAK_SEO_PLUGIN_DIR . 'inc/tools/redirect.php';
-}
-
-if ( get_option( 'netpeak_seo_schema_organization_and_person' ) == 1 ) {
-    require_once NETPEAK_SEO_PLUGIN_DIR . 'inc/tools/schemas/organization-and-person.php';
+foreach ($tools as $option => $file) {
+    if (get_option($option) == 1) {
+        require_once NETPEAK_SEO_PLUGIN_DIR . $file;
+    }
 }
 
 

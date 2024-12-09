@@ -32,18 +32,17 @@ function netpeak_register_settings() {
     register_setting( 'netpeak_seo_license', 'netpeak_seo_license_auth_token' );
     register_setting( 'netpeak_seo_license', 'netpeak_seo_license_key' );
     #Mail
+    register_setting('netpeak_smtp_settings', 'netpeak_smtp_enabled');
     register_setting('netpeak_smtp_settings', 'netpeak_smtp_host');
     register_setting('netpeak_smtp_settings', 'netpeak_smtp_port');
     register_setting('netpeak_smtp_settings', 'netpeak_smtp_authentication');
+    register_setting('netpeak_smtp_settings', 'netpeak_smtp_auto_tls');
     register_setting('netpeak_smtp_settings', 'netpeak_smtp_username');
     register_setting('netpeak_smtp_settings', 'netpeak_smtp_password');
     register_setting('netpeak_smtp_settings', 'netpeak_smtp_from');
     register_setting('netpeak_smtp_settings', 'netpeak_smtp_from_name');
     register_setting('netpeak_smtp_settings', 'netpeak_smtp_encryption');
     register_setting('netpeak_smtp_settings', 'netpeak_smtp_test_email');
-    
-
-    
 }
 add_action('admin_init', 'netpeak_register_settings');
 

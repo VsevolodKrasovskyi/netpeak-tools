@@ -9,8 +9,8 @@ include NETPEAK_SEO_COMPONENTS_ADMIN . 'tab-header.php';
 
     <form method="post" action="options.php">
     <?php
-        settings_fields('netpeak_seo_redirect_settings');
-        do_settings_sections('netpeak_seo_redirect_settings');
+    settings_fields('netpeak_seo_redirect_settings');
+    do_settings_sections('netpeak_seo_redirect_settings');
     ?>
     <table class="form-table">
         <!-- Global Redirect Enable -->
