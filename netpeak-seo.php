@@ -10,7 +10,7 @@
  * Requires PHP: 7.0
  * License: Subscription-based License
  * License URI: https://cdn.netpeak.dev/license-information
- * Version: 1.0.2
+ * Version: 1.0.3
  */
 if ( ! class_exists( 'WP_GitHub_Updater' ) ) {
     include_once plugin_dir_path( __FILE__ ) . 'inc/functions/updater.php'; 
