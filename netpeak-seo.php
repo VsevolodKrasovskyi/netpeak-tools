@@ -1,6 +1,7 @@
 <?php
 /**
  * Plugin Name: Netpeak Tools
+ * Plugin URI: https://cdn.netpeak.dev/
  * Description: Basic SEO settings, HTML map generation, and more
  * Author: Netpeak Dev Team
  * Author URI: https://netpeak.dev/
@@ -11,6 +12,12 @@
  * License: Subscription-based License
  * License URI: https://cdn.netpeak.dev/license-information
  * Version: 1.0.3
+ * ███╗   ██╗███████╗████████╗██████╗ ███████╗ █████╗ ██╗  ██╗
+ * ████╗  ██║██╔════╝╚══██╔══╝██╔══██╗██╔════╝██╔══██╗██║ ██╔╝
+ * ██╔██╗ ██║█████╗     ██║   ██████╔╝█████╗  ███████║█████╔╝ 
+ * ██║╚██╗██║██╔══╝     ██║   ██╔═══╝ ██╔══╝  ██╔══██║██╔═██╗ 
+ * ██║ ╚████║███████╗   ██║   ██║     ███████╗██║  ██║██║  ██╗
+ * ╚═╝  ╚═══╝╚══════╝   ╚═╝   ╚═╝     ╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝
  */
 if ( ! class_exists( 'WP_GitHub_Updater' ) ) {
     include_once plugin_dir_path( __FILE__ ) . 'inc/functions/updater.php'; 
