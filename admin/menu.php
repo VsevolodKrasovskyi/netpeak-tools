@@ -6,8 +6,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 function netpeak_seo_add_admin_menu() {
     add_menu_page(
-        __( 'Netpeak SEO', 'netpeak-seo' ),              
-        __( 'Netpeak SEO', 'netpeak-seo' ),              
+        __( 'Netpeak Tools', 'netpeak-seo' ),              
+        __( 'Netpeak Tools', 'netpeak-seo' ),              
         'manage_options',                                
         'netpeak-seo-main',                              
         'license_page',                  
@@ -79,6 +79,8 @@ add_action( 'admin_menu', 'netpeak_seo_add_admin_menu' );
  * @category tabs
  * @author Netpeak Dev
 */
+
+include NETPEAK_SEO_COMPONENTS_ADMIN . 'widget-dashboard.php';
 
 function netpeak_seo_alt_title_page() {
     include NETPEAK_SEO_PLUGIN_DIR . 'admin/tabs/alt-title-image.php';

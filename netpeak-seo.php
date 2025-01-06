@@ -11,7 +11,7 @@
  * Requires PHP: 7.0
  * License: Subscription-based License
  * License URI: https://cdn.netpeak.dev/license-information
- * Version: 1.0.3
+ * Version: 1.0.4
  * ███╗   ██╗███████╗████████╗██████╗ ███████╗ █████╗ ██╗  ██╗
  * ████╗  ██║██╔════╝╚══██╔══╝██╔══██╗██╔════╝██╔══██╗██║ ██╔╝
  * ██╔██╗ ██║█████╗     ██║   ██████╔╝█████╗  ███████║█████╔╝ 
@@ -32,14 +32,15 @@ if ( class_exists( 'WP_GitHub_Updater' ) ) {
         'github_url' => 'https://github.com/VsevolodKrasovskyi/netpeak-tools', 
         'zip_url' => 'https://github.com/VsevolodKrasovskyi/netpeak-tools/zipball/prod', 
         'sslverify' => true, 
-        'requires' => '3.0', 
-        'tested' => '6.0', 
+        'requires' => '5.0', 
+        'tested' => '6.6.2', 
         'readme' => 'README.md', 
         'access_token' => '', 
         'screenshots' => array(
             'https://raw.githubusercontent.com/VsevolodKrasovskyi/netpeak-tools/prod/changelog/screenshots/screenshot1.png',
             'https://raw.githubusercontent.com/VsevolodKrasovskyi/netpeak-tools/prod/changelog/screenshots/screenshot2.png',
         ),
+        'banner'=> 'https://images.netpeak.net/blog/main_691d938eb457d4bc06eae9c59d8cc216c3a161c8.png'
     ));
 }
 
@@ -55,7 +56,7 @@ require plugin_dir_path( __FILE__ ) . 'init.php';
 * Load plugin textdomain.
 */
 function netpeak_load_textdomain() {
-  load_plugin_textdomain( 'netpeak-seo', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' ); 
+    load_plugin_textdomain( 'netpeak-seo', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' ); 
 }
 add_action( 'init', 'netpeak_load_textdomain' );
 

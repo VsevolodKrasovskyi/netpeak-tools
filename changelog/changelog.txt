@@ -1,3 +1,7 @@
+#1.0.4
+Added widget for dashboard to display license status, mail bug fix, debug API,
+Update cdn.netpeak.dev - added reminder to email when license expires
+
 #1.0.3
 Fix bug (Redirect)
 
