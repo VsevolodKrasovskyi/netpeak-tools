@@ -330,6 +330,13 @@ class WP_GitHub_Updater {
 	 */
 	public function api_check( $transient ) {
 
+		if ( ! $this->is_license_active() ) {
+			if ( isset( $transient->response[ $this->config['slug'] ] ) ) {
+				unset( $transient->response[ $this->config['slug'] ] );
+			}
+			return $transient; 
+		}
+
 		// Check if the transient contains the 'checked' information
 		// If not, just return its value without hacking it
 		if ( empty( $transient->checked ) )
@@ -360,7 +367,8 @@ class WP_GitHub_Updater {
 	 * @return string $changelog the changelog
 	 */
 	private function get_changelog() {
-		$changelog_url = trailingslashit($this->config['raw_url']) . 'changelog/changelog.txt';
+		$changelog_url = trailingslashit($this->config['raw_url']) . 'changelog/changelog.md';
+		
 	
 		// Execute the enquiry на GitHub
 		$response = wp_remote_get($changelog_url, array(
@@ -371,16 +379,20 @@ class WP_GitHub_Updater {
 			return 'Unable to fetch changelog: ' . $response->get_error_message();
 		}
 	
-		$body = wp_remote_retrieve_body
-		($response);
+		$body = wp_remote_retrieve_body($response);
 
 		// If the body is empty, return an error message
 		if (empty($body)) {
 			return 'Changelog is empty or not found.';
 		}
+
+		if (!class_exists('Parsedown')) {
+			require_once NETPEAK_SEO_PLUGIN_DIR . 'inc/functions/Parsedown.php';
+		}
 	
 		// Return file contents changelog.txt
-		return nl2br(esc_html($body));
+		$Parsedown = new Parsedown();
+    	return $Parsedown->text($body); 
 	}
 
 	/**
@@ -446,7 +458,35 @@ class WP_GitHub_Updater {
 		return $response;
 	}
 
-
+	private function is_license_active() {
+		$license_status = get_transient('netpeak_seo_license_status');
+	
+		if ( false !== $license_status ) {
+			return $license_status;
+		}
+	
+		$response = wp_remote_post( 'https://cdn.netpeak.dev/api/check-license-status', array(
+			'headers' => array(
+				'Authorization' => 'Bearer ' . get_option('netpeak_seo_license_auth_token'),
+			),
+			'body' => array(
+				'license_key' => get_option('netpeak_seo_license_key'),
+				'domain'      => $_SERVER['HTTP_HOST'],
+			),
+		));
+		if ( is_wp_error( $response ) ) {
+			return false; 
+		}
+		$body = json_decode( wp_remote_retrieve_body( $response ), true );
+	
+		$license_active = isset( $body['is_valid'] ) && $body['is_valid'] == 1 && isset( $body['is_activate'] ) && $body['is_activate'] == 1;
+	
+		set_transient('netpeak_seo_license_status', $license_active, DAY_IN_SECONDS);
+	
+		return $license_active;
+	}
+	
+	
 	/**
 	 * Upgrader/Updater
 	 * Move & activate the plugin, echo the update message

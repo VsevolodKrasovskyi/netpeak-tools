@@ -99,7 +99,6 @@ function load_cdn_script($script_name) {
         
         $encrypted_script = openssl_encrypt($script_content, 'AES-256-CBC', $license_key, 0, substr($license_key, 0, 16));
         $hash = hash('sha256', $script_content);
-        // Save the encrypted script and its hash to the cache
         $cacheManager->set($cache_key, $encrypted_script, HOUR_IN_SECONDS);
         $cacheManager->set($cache_key . '_hash', $hash, HOUR_IN_SECONDS);
 

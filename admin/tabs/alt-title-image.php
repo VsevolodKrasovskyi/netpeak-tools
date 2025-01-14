@@ -1,6 +1,9 @@
 <?php
 include NETPEAK_SEO_COMPONENTS_ADMIN . 'tab-header.php';
 include NETPEAK_SEO_PLUGIN_DIR . 'assets/js/license-switch.php';
+if ( ! function_exists( 'is_plugin_active' ) ) {
+    include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+}
 ?>
 <div class="wrap wrap-netpeak licensed-feature">
     <form method="post" action="options.php">
@@ -20,6 +23,8 @@ include NETPEAK_SEO_PLUGIN_DIR . 'assets/js/license-switch.php';
                 </td>
             </tr>
             <!-- Elementor integration -->
+            <?php
+            if ( is_plugin_active( 'elementor/elementor.php' ) ) { ?>
             <tr valign="top">
                 <th><?php _ex('Addon for Elementor', 'alt title page admin', 'netpeak-seo'); ?></th>
                 <td>
@@ -36,6 +41,7 @@ include NETPEAK_SEO_PLUGIN_DIR . 'assets/js/license-switch.php';
                     </div>
                 </td>
             </tr>
+            <?php } ?>
             <!-- Enable automatic Atl&Title -->
             <tr valign="top">
                 <th><?php _ex('Enable Auto Genetare Atl&Title', 'alt title page admin', 'netpeak-seo'); ?></th>

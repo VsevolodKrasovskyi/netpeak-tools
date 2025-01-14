@@ -11,7 +11,8 @@
  * Requires PHP: 7.0
  * License: Subscription-based License
  * License URI: https://cdn.netpeak.dev/license-information
- * Version: 1.0.4
+ * Version: 1.0.5
+ *
  * ███╗   ██╗███████╗████████╗██████╗ ███████╗ █████╗ ██╗  ██╗
  * ████╗  ██║██╔════╝╚══██╔══╝██╔══██╗██╔════╝██╔══██╗██║ ██╔╝
  * ██╔██╗ ██║█████╗     ██║   ██████╔╝█████╗  ███████║█████╔╝ 
