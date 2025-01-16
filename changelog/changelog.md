@@ -1,3 +1,13 @@
+# 1.0.6
+**CDN**
+- Added domain and license key validation during key retrieval to enhance security.
+
+**PLUGIN**
+- Refactoring the method of loading script from cdn, improving performance and security.
+- Refactoring AJAX handlers
+
+---
+
 # 1.0.5
 **CDN**  
 - Changed the method of key generation: now keys are generated in the format `XXXX-XXXX-XXXX-XXXX-XXXX`.  

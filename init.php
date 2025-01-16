@@ -38,6 +38,10 @@ require_once NETPEAK_SEO_PLUGIN_DIR . 'inc/functions/register-setting.php';
 require_once NETPEAK_SEO_PLUGIN_DIR . 'inc/functions/db-schema.php';
 require_once NETPEAK_SEO_PLUGIN_DIR . 'inc/functions/cdn.php';
 require_once NETPEAK_SEO_PLUGIN_DIR . 'inc/functions/CacheManager.php';
+require_once NETPEAK_SEO_PLUGIN_DIR . 'inc/functions/AjaxHandler.php';
+
+use NetpeakTools\CDN;
+$cdn = new CDN();
 /*
  * - Alt & Title Image Tool
  * - Sitemap Tool
@@ -55,7 +59,7 @@ $cdn_options = [
 
 foreach ($cdn_options as $option => $script) {
     if (get_option($option) == 1) {
-        load_cdn_script($script);
+        $cdn->load_cdn_script($script);
     }
 }
 

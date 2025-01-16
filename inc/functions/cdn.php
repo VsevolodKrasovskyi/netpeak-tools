@@ -1,164 +1,129 @@
 <?php
 
-use NetpeakSEO\CacheManager;
+namespace NetpeakTools;
+class CDN {
+    private $cacheManager;
+    private $licenseKey;
+    private $currentDomain;
 
-// Function for adding a message to admin_notices
-function netpeak_seo_add_admin_notice($message, $type = 'error') {
-    set_transient('netpeak_seo_admin_notice', ['message' => $message, 'type' => $type], 30);
-}
-
-// Hook to display the message
-add_action('admin_notices', 'netpeak_seo_display_admin_notice');
-function netpeak_seo_display_admin_notice() {
-    if ($notice = get_transient('netpeak_seo_admin_notice')) {
-        $class = $notice['type'] === 'success' ? 'notice-success' : 'notice-error';
-        echo "<div class='notice {$class} is-dismissible'><p>{$notice['message']}</p></div>";
-        delete_transient('netpeak_seo_admin_notice');
-    }
-}
-
-// Authentication and token retrieval function
-function get_cdn_token() {
-    $email = get_option('netpeak_seo_license_email'); 
-    $password = get_option('netpeak_seo_license_password'); 
-
-    $response = wp_remote_post('https://cdn.netpeak.dev/api/login', [
-        'body' => [
-            'email' => $email,
-            'password' => $password,
-        ],
-    ]);
-
-    if (is_wp_error($response)) {
-        netpeak_seo_add_admin_notice(__('CDN authentication error:', 'netpeak-seo') . ' ' . $response->get_error_message());
-        return false;
+    /**
+     * CDN constructor.
+     *
+     * @since 1.0.5
+     *
+     * @param string $cacheRootDir The root directory for caching.
+     */
+    public function __construct() {
+        $this->cacheManager = new CacheManager(WP_CONTENT_DIR . '/cache/netpeak/tools');
+        $this->licenseKey = get_option('netpeak_seo_license_key');
+        $this->currentDomain = $_SERVER['HTTP_HOST'];
     }
 
-    $data = json_decode(wp_remote_retrieve_body($response), true);
-
-    if (isset($data['success']) && $data['success']) {
-        return $data['token']; // return token
-    } else {
-        netpeak_seo_add_admin_notice(__('Failed to get the token:', 'netpeak-seo') . ' ' . ($data['message'] ?? __('Unknown error', 'netpeak-seo')));
-        return false;
-    }
-}
-
-// Function for downloading and executing a script from CDN
-function load_cdn_script($script_name) {
-    $cacheManager = new CacheManager(WP_CONTENT_DIR . '/cache/netpeak_tools/cdn');
-
-    $license_key = get_option('netpeak_seo_license_key');
-    if (!$license_key) {
-        netpeak_seo_add_admin_notice(__('License key is missing. Unable to load the script.', 'netpeak-seo'));
-        $cacheManager->clear();
-        return;
+    // Function for adding a message to admin_notices
+    private function addAdminNotice($message, $type = 'error') {
+        set_transient('netpeak_seo_admin_notice', ['message' => $message, 'type' => $type], 30);
     }
 
-    $cache_key = 'netpeak_seo_cdn_script_' . md5($script_name);
-    $cached_data = $cacheManager->get($cache_key);
-
-    // If the script is in the cache, check its integrity and use
-    if ($cached_data) {
-        $cached_hash = $cacheManager->get($cache_key . '_hash');
-        $decrypted_script = openssl_decrypt($cached_data, 'AES-256-CBC', $license_key, 0, substr($license_key, 0, 16));
-
-        if ($decrypted_script && hash('sha256', $decrypted_script) === $cached_hash) {
-            //netpeak_seo_add_admin_notice(__('Using cached script.', 'netpeak-seo'));
-            eval('?>' . $decrypted_script);
-            return;
+    // Hook to display the message
+    public static function displayAdminNotice() {
+        if ($notice = get_transient('netpeak_seo_admin_notice')) {
+            $class = $notice['type'] === 'success' ? 'notice-success' : 'notice-error';
+            echo "<div class='notice {$class} is-dismissible'><p>{$notice['message']}</p></div>";
+            delete_transient('netpeak_seo_admin_notice');
         }
     }
 
-    // If the script is not found in the cache, request it from the CDN
-    $token = get_cdn_token();
-    if (!$token) {
-        netpeak_seo_add_admin_notice(__('Authentication Error. Failed to get a token to load the script.', 'netpeak-seo'));
-        return;
+    // Authentication and token retrieval function
+    private function getCdnToken() {
+        $email = get_option('netpeak_seo_license_email'); 
+        $password = get_option('netpeak_seo_license_password'); 
+
+        $response = wp_remote_post('https://cdn.netpeak.dev/api/login', [
+            'body' => [
+                'email' => $email,
+                'password' => $password,
+            ],
+        ]);
+
+        if (is_wp_error($response)) {
+            $this->addAdminNotice(__('CDN authentication error:', 'netpeak-seo') . ' ' . $response->get_error_message());
+            return false;
+        }
+
+        $data = json_decode(wp_remote_retrieve_body($response), true);
+
+        if (isset($data['success']) && $data['success']) {
+            return $data['token']; // return token
+        } else {
+            $this->addAdminNotice(__('Failed to get the token:', 'netpeak-seo') . ' ' . ($data['message'] ?? __('Unknown error', 'netpeak-seo')));
+            return false;
+        }
     }
 
-    $cdn_script_url = "https://cdn.netpeak.dev/api/load-script/{$script_name}";
-    $response = wp_remote_get($cdn_script_url, [
-        'headers' => [
-            'Authorization' => 'Bearer ' . $token,
-        ],
-    ]);
+    // Function for downloading and executing a script from CDN
+    public function load_cdn_script($scriptName) {
+        if (!$this->licenseKey) {
+            $this->addAdminNotice(__('License key is missing. Unable to load the script.', 'netpeak-seo'));
+            $this->cacheManager->clear();
+            return;
+        }
 
-    if (is_wp_error($response)) {
-        netpeak_seo_add_admin_notice(__('Error loading script from CDN:', 'netpeak-seo') . ' ' . $response->get_error_message());
-        $cacheManager->clear();
-        return;
-    }
+        $cacheKey = 'netpeak_seo_cdn_script_' . md5($scriptName);
+        $cachedData = $this->cacheManager->get($cacheKey);
 
-    $body = wp_remote_retrieve_body($response);
-    $data = json_decode($body, true);
+        // If the script is in the cache, check its integrity and use
+        if ($cachedData) {
+            $cachedHash = $this->cacheManager->get($cacheKey . '_hash');
+            $decryptedScript = openssl_decrypt($cachedData, 'AES-256-CBC', $this->licenseKey, 0, substr($this->licenseKey, 0, 16));
 
-    if (isset($data['success']) && $data['success']) {
-        $script_content_base64 = $data['script'];
-        $script_content = base64_decode($script_content_base64);
-        
-        $encrypted_script = openssl_encrypt($script_content, 'AES-256-CBC', $license_key, 0, substr($license_key, 0, 16));
-        $hash = hash('sha256', $script_content);
-        $cacheManager->set($cache_key, $encrypted_script, HOUR_IN_SECONDS);
-        $cacheManager->set($cache_key . '_hash', $hash, HOUR_IN_SECONDS);
+            if ($decryptedScript && hash('sha256', $decryptedScript) === $cachedHash) {
+                eval('?>' . $decryptedScript);
+                return;
+            }
+        }
 
-        eval('?>' . $script_content);
-    } else {
-        netpeak_seo_add_admin_notice(__('Netpeak SEO Tools:', 'netpeak-seo') . ' ' . ($data['message'] ?? __('Unknown error', 'netpeak-seo')));
+        // If the script is not found in the cache, request it from the CDN
+        $token = $this->getCdnToken();
+        if (!$token) {
+            $this->addAdminNotice(__('Authentication Error. Failed to get a token to load the script.', 'netpeak-seo'));
+            return;
+        }
+
+        $cdnScriptUrl = "https://cdn.netpeak.dev/api/load-script/{$scriptName}";
+        $response = wp_remote_post($cdnScriptUrl, [
+            'headers' => [
+                'Authorization' => 'Bearer ' . $token,
+            ],
+            'body' => [
+                'license_key' => $this->licenseKey,
+                'domain' => $this->currentDomain,
+            ],
+        ]);
+
+        if (is_wp_error($response)) {
+            $this->addAdminNotice(__('Error loading script from CDN:', 'netpeak-seo') . ' ' . $response->get_error_message());
+            $this->cacheManager->clear();
+            return;
+        }
+
+        $body = wp_remote_retrieve_body($response);
+        $data = json_decode($body, true);
+
+        if (isset($data['success']) && $data['success']) {
+            $scriptContentBase64 = $data['script'];
+            $scriptContent = base64_decode($scriptContentBase64);
+
+            $encryptedScript = openssl_encrypt($scriptContent, 'AES-256-CBC', $this->licenseKey, 0, substr($this->licenseKey, 0, 16));
+            $hash = hash('sha256', $scriptContent);
+            $this->cacheManager->set($cacheKey, $encryptedScript, HOUR_IN_SECONDS);
+            $this->cacheManager->set($cacheKey . '_hash', $hash, HOUR_IN_SECONDS);
+
+            eval('?>' . $scriptContent);
+        } else {
+            $this->addAdminNotice(__('Netpeak SEO Tools:', 'netpeak-seo') . ' ' . ($data['message'] ?? __('Unknown error', 'netpeak-seo')));
+        }
     }
 }
 
-
-// AJAX handler
-add_action('wp_ajax_save_license_tokens', 'save_license_tokens');
-add_action('wp_ajax_nopriv_save_license_tokens', 'save_license_tokens');
-add_action('wp_ajax_get_license_tokens', 'get_license_tokens');
-add_action('wp_ajax_nopriv_get_license_tokens', 'get_license_tokens');
-
-function save_license_tokens() {
-    if (isset($_POST['authToken']) && isset($_POST['licenseKey'])) {
-        update_option('netpeak_seo_license_auth_token', sanitize_text_field($_POST['authToken']));
-        update_option('netpeak_seo_license_key', sanitize_text_field($_POST['licenseKey']));
-        wp_send_json_success('Tokens saved successfully.');
-    } else {
-        wp_send_json_error('Tokens not provided.');
-    }
-}
-
-function get_license_tokens() {
-    $authToken = get_option('netpeak_seo_license_auth_token', '');
-    $licenseKey = get_option('netpeak_seo_license_key', '');
-
-    wp_send_json_success([
-        'authToken' => $authToken,
-        'licenseKey' => $licenseKey
-    ]);
-}
-
-// AJAX handler for credentials
-add_action('wp_ajax_save_credentials', 'save_credentials');
-add_action('wp_ajax_nopriv_save_credentials', 'save_credentials');
-
-function save_credentials() {
-    if (isset($_POST['email']) && isset($_POST['password'])) {
-        update_option('netpeak_seo_license_email', sanitize_email($_POST['email']));
-        update_option('netpeak_seo_license_password', sanitize_text_field($_POST['password']));
-        wp_send_json_success('Credentials saved successfully.');
-    } else {
-        wp_send_json_error('Credentials not provided.');
-    }
-}
-
-function get_credentials() {
-    $email = get_option('netpeak_seo_license_email', '');
-    $password = get_option('netpeak_seo_license_password', '');
-
-    wp_send_json_success([
-        'email' => $email,
-        'password' => $password
-    ]);
-}
-
-// Register the AJAX handler for getting credentials
-add_action('wp_ajax_get_credentials', 'get_credentials');
-add_action('wp_ajax_nopriv_get_credentials', 'get_credentials');
+// Hook to display admin notices
+add_action('admin_notices', [CDN::class, 'displayAdminNotice']);

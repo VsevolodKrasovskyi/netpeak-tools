@@ -11,7 +11,7 @@
  * Requires PHP: 7.0
  * License: Subscription-based License
  * License URI: https://cdn.netpeak.dev/license-information
- * Version: 1.0.5
+ * Version: 1.0.6
  *
  * ███╗   ██╗███████╗████████╗██████╗ ███████╗ █████╗ ██╗  ██╗
  * ████╗  ██║██╔════╝╚══██╔══╝██╔══██╗██╔════╝██╔══██╗██║ ██╔╝
@@ -63,3 +63,5 @@ add_action( 'init', 'netpeak_load_textdomain' );
 
 // Hooks
 register_activation_hook(__FILE__, 'create_schema_table');
+
+
