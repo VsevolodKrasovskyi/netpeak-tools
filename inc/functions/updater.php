@@ -441,7 +441,6 @@ class WP_GitHub_Updater {
 		$response->homepage = $this->config['homepage'];
 		$response->requires = $this->config['requires'];
 		$response->tested = $this->config['tested'];
-		$response->downloaded   = $this->config['downloaded'];
 		$response->last_updated = $this->config['last_updated'];
 		$response->sections = array( 
 			'description' => $this->config['description'],
@@ -451,8 +450,6 @@ class WP_GitHub_Updater {
 		$response->download_link = $this->config['zip_url'];
 		$response->banners = array(
 			'low'  => $this->config['banner'],
-			'high' => $this->config['banner_retina'],
-			
 		);
 
 		return $response;

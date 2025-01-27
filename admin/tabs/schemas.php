@@ -29,6 +29,9 @@ wp_enqueue_style( 'schemas-tab', NETPEAK_SEO_PLUGIN_URL . 'assets/css/schemas-ta
 <script>
     jQuery(document).ready(function ($) {
         $('.schema-tab').on('click', function (e) {
+            if ($(this).attr('type') === 'submit') {
+                return true; 
+            }
             e.preventDefault();
 
             $('.schema-tab').removeClass('schema-tab-active');

@@ -1,3 +1,14 @@
+# 1.0.7
+
+**PLUGIN**
+- Refactoring Schema&Structure:
+    - Improved AJAX handling for forms, resolving submission and response processing issues.
+    - Optimized and refactored schema data saving and retrieval mechanisms.
+    - Simplified code structure, making it more readable and easier to debug.
+    - Completely refactored the database handler to use an Object-Oriented Programming (OOP) approach for better maintainability and scalability. Enhanced schema and structure functionality to improve data management and overall performance.
+    - Fixed issues with the AJAX form handler that caused inconsistencies during data submission.
+---
+
 # 1.0.6
 **CDN**
 - Added domain and license key validation during key retrieval to enhance security.

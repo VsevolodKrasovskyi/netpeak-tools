@@ -1,40 +1,41 @@
-<form method="post" action="">
+<form id="schema-form" method="post" action="<?php echo admin_url('admin-ajax.php'); ?>">
     <?php
-    // Save data
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_schema_data'])) {
-        save_schema_data(); 
-    }
-    //Get data
-    $data = get_schema_data(isset($_POST['schema_type']) ? $_POST['schema_type'] : 'Organization');
-    //Inputs
-    $schema_type = isset($data['schema_type']) ? $data['schema_type'] : '';
-    $organization_name = isset($data['organization_name']) ? $data['organization_name'] : '';
-    $organization_legal_name = isset($data['organization_legal_name']) ? $data['organization_legal_name'] : '';
-    $organization_url = isset($data['organization_url']) ? $data['organization_url'] : '';
-    $contact_type = isset($data['contact_type']) ? $data['contact_type'] : '';
-    $contact_number = isset($data['contact_number']) ? $data['contact_number'] : '';
-    $contact_url = isset($data['contact_url']) ? $data['contact_url'] : '';
-    $organization_logo = isset($data['organization_logo']) ? $data['organization_logo'] : '';
-    $street_address = isset($data['street_address']) ? $data['street_address'] : '';
-    $address_locality = isset($data['address_locality']) ? $data['address_locality'] : '';
-    $address_region = isset($data['address_region']) ? $data['address_region'] : '';
-    $postal_code = isset($data['postal_code']) ? $data['postal_code'] : '';
-    $address_country = isset($data['address_country']) ? $data['address_country'] : '';
-    // Initialize variables for Person
-    $person_name = isset($data['person_name']) ? $data['person_name'] : '';
-    $alternate_name = isset($data['alternate_name']) ? $data['alternate_name'] : '';
-    $description = isset($data['description']) ? $data['description'] : '';
-    $person_url = isset($data['person_url']) ? $data['person_url'] : '';
-    $job_title = isset($data['job_title']) ? $data['job_title'] : '';
-    $affiliation = isset($data['affiliation']) ? $data['affiliation'] : '';
-    $birth_date = isset($data['birth_date']) ? $data['birth_date'] : '';
-    $contact_points = isset($data['contact_points']) ? $data['contact_points'] : '';
-    $person_image = isset($data['person_image']) ? $data['person_image'] : '';
-    $gender = isset($data['gender']) ? $data['gender'] : '';
-    $nationality = isset($data['nationality']) ? $data['nationality'] : '';
-    $works_for = isset($data['works_for']) ? $data['works_for'] : '';
-    $same_as = isset($data['same_as']) ? $data['same_as'] : '';
-    ?>
+    $schema_handler = new NetpeakTools\SchemaHandler();
+    $category = 'organization&person';
+    
+    $organization_data = $schema_handler->getSchema($category, 'Organization');
+    $person_data = $schema_handler->getSchema($category, 'Person');
+    
+    // Initialization of variables
+    $schema_type = $organization_data['schema_type'] ?? ($person_data['schema_type'] ?? '');
+    $organization_name = $organization_data['organization_name'] ?? '';
+    $organization_legal_name = $organization_data['organization_legal_name'] ?? '';
+    $organization_url = $organization_data['organization_url'] ?? '';
+    $contact_type = $organization_data['contact_type'] ?? '';
+    $contact_number = $organization_data['contact_number'] ?? '';
+    $contact_url = $organization_data['contact_url'] ?? '';
+    $organization_logo = $organization_data['organization_logo'] ?? '';
+    $street_address = $organization_data['street_address'] ?? '';
+    $address_locality = $organization_data['address_locality'] ?? '';
+    $address_region = $organization_data['address_region'] ?? '';
+    $postal_code = $organization_data['postal_code'] ?? '';
+    $address_country = $organization_data['address_country'] ?? '';
+    $person_name = $person_data['person_name'] ?? '';
+    $alternate_name = $person_data['alternate_name'] ?? '';
+    $description = $person_data['description'] ?? '';
+    $person_url = $person_data['person_url'] ?? '';
+    $job_title = $person_data['job_title'] ?? '';
+    $affiliation = $person_data['affiliation'] ?? '';
+    $birth_date = $person_data['birth_date'] ?? '';
+    $contact_points = $person_data['contact_points'] ?? '';
+    $person_image = $person_data['person_image'] ?? '';
+    $gender = $person_data['gender'] ?? '';
+    $nationality = $person_data['nationality'] ?? '';
+    $works_for = $person_data['works_for'] ?? '';
+    $same_as = $person_data['same_as'] ?? '';
+    ?>    
+
+    <input type="hidden" name="action" value="save_organization_and_person">
     <div class="title-global-switch">
         <h2><?php _e('Enable Global ', 'netpeak-seo'); ?></h2>
         <div class="global-switch-button">
@@ -44,7 +45,7 @@
             </label>
         </div>
     </div>
-    <table class="form-table">
+    <table id="schema-table" class="form-table">
         <!-- Data Type -->
         <tr>
             <th scope="row"><label for="schema_type">Data Type</label></th>
