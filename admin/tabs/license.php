@@ -1,6 +1,6 @@
 <?php
 include NETPEAK_SEO_COMPONENTS_ADMIN . 'tab-header.php';
-include NETPEAK_SEO_PLUGIN_DIR . 'inc/functions/license-check.php';
+
 
 // Function for saving email and password
 function netpeak_save_license_credentials($email, $password) {
@@ -18,7 +18,7 @@ $saved_license_key = get_option( 'netpeak_seo_license_key', '' );
 <div id="loader" style="display:none; text-align: center;">
     <img width="50" src="<?php echo NETPEAK_SEO_IMAGE . 'loading.gif'; ?>" alt="Loading...">
 </div>
-<div id="response"></div>
+<div id="netpeak-license-response"></div>
 
 <form id="auth-form" style="display:none;">
     <input type="email" name="email" placeholder="<?php esc_attr_e('Enter your email', 'netpeak-seo'); ?>" required value="<?php echo esc_attr($saved_email); ?>">

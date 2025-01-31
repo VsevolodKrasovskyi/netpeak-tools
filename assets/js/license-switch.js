@@ -1,35 +1,3 @@
-<style>
-.licensed-feature.disabled {
-    pointer-events: none; 
-    position: relative; 
-    opacity: 0.8; 
-}
-
-.licensed-feature.disabled * {
-    filter: blur(2px);
-}
-
-
-.licensed-feature.disabled::after {
-    content: "<?php _e('This feature is available only with a license', 'netpeak-seo'); ?>";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: rgba(0, 0, 0, 0.7);
-    color: white;
-    padding: 8px;
-    border-radius: 5px;
-    font-size: 14px;
-    text-align: center;
-    pointer-events: none; 
-    z-index: 1; 
-    filter: none; 
-    opacity: 1;
-}
-</style>
-
-<script>
 jQuery(document).ready(function($) {
     function checkLicenseStatusFromCDN() {
         const authToken = localStorage.getItem("authToken");
@@ -74,10 +42,9 @@ jQuery(document).ready(function($) {
         $('.licensed-feature').each(function() {
             $(this).addClass('disabled');
             $(this).find('.dependent-checkbox').prop('disabled', true).prop('checked', false);
+            $(this).attr('data-license-message', NetpeakData.license_message);
         });
     }
 
     checkLicenseStatusFromCDN();
 });
-
-</script>

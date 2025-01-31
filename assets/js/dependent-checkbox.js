@@ -1,6 +1,10 @@
 document.addEventListener('DOMContentLoaded', function() {
     const globalRedirectCheckbox = document.querySelector('.global-switch');
     const dependentCheckboxes = document.querySelectorAll('.dependent-checkbox');
+
+    if (!globalRedirectCheckbox || dependentCheckboxes.length === 0) {
+        return;
+    }
     function toggleDependentCheckboxes() {
         const isGlobalEnabled = globalRedirectCheckbox.checked;
         

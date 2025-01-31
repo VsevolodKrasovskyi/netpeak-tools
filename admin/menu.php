@@ -105,14 +105,6 @@ function license_page() {
     include NETPEAK_SEO_PLUGIN_DIR . 'admin/tabs/license.php';
 }
 
-//Style & Script
-function netpeak_assets_include_admin() {
-    wp_enqueue_style( 'netpeak-admin-style', NETPEAK_SEO_PLUGIN_URL . 'assets/css/admin.css' );
-    wp_enqueue_style( 'license-page', NETPEAK_SEO_PLUGIN_URL . 'assets/css/license-page.css' );
-    wp_enqueue_script( 'tooltip', NETPEAK_SEO_PLUGIN_URL . 'assets/js/tooltip.js', array(), '3.0' );
-    wp_enqueue_script( 'dependent-checkbox', NETPEAK_SEO_PLUGIN_URL . 'assets/js/dependent-checkbox.js', array(), '3.0' );
-}
-add_action( 'admin_enqueue_scripts', 'netpeak_assets_include_admin' );
 
 
 

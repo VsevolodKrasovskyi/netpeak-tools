@@ -59,18 +59,36 @@ class WP_GitHub_Updater {
 		$this->set_defaults();
 
 		add_filter( 'pre_set_site_transient_update_plugins', array( $this, 'api_check' ) );
-
-		// Hook into the plugin details screen
 		add_filter( 'plugins_api', array( $this, 'get_plugin_info' ), 10, 3 );
-
-		// Hook into the plugin install screen
 		add_filter( 'upgrader_post_install', array( $this, 'upgrader_post_install' ), 10, 3 );
-
-		// set timeout
 		add_filter( 'http_request_timeout', array( $this, 'http_request_timeout' ) );
-
-		// set sslverify for zip download
 		add_filter( 'http_request_args', array( $this, 'http_request_sslverify' ), 10, 2 );
+		add_filter( 'plugin_action_links', array( $this, 'add_check_update_button' ), 10, 2 );
+		add_action( 'wp_ajax_check_plugin_update', array( $this, 'ajax_check_update' ) );
+
+		add_action( 'admin_footer', function() {
+			?>
+			<script>
+				jQuery(document).ready(function($) {
+					$('.check-update-link').on('click', function(e) {
+						e.preventDefault();
+						const $button = $(this);
+						$button.text('Checking...');
+						$.post(ajaxurl, { action: 'check_plugin_update' }, function(response) {
+							if (response.success) {
+								alert('Update check completed successfully.');
+							} else {
+								alert('Error: ' + response.data);
+							}
+							$button.text('Check Update');
+						});
+					});
+				});
+			</script>
+			<?php
+		});
+		
+
 	}
 
 	public function has_minimum_config() {
@@ -306,8 +324,6 @@ class WP_GitHub_Updater {
 	}
 
 	
-
-
 	/**
 	 * Get Plugin data
 	 *
@@ -330,12 +346,12 @@ class WP_GitHub_Updater {
 	 */
 	public function api_check( $transient ) {
 
-		if ( ! $this->is_license_active() ) {
-			if ( isset( $transient->response[ $this->config['slug'] ] ) ) {
-				unset( $transient->response[ $this->config['slug'] ] );
-			}
-			return $transient; 
+		
+		if ( isset( $transient->response[ $this->config['slug'] ] ) ) {
+			unset( $transient->response[ $this->config['slug'] ] );
 		}
+		return $transient; 
+	
 
 		// Check if the transient contains the 'checked' information
 		// If not, just return its value without hacking it
@@ -455,32 +471,22 @@ class WP_GitHub_Updater {
 		return $response;
 	}
 
-	private function is_license_active() {
-		$license_status = get_transient('netpeak_seo_license_status');
-	
-		if ( false !== $license_status ) {
-			return $license_status;
+	public function add_check_update_button( $links, $file ) {
+		if ( $file === $this->config['slug'] ) {
+			$links[] = '<a href="#" class="check-update-link" data-plugin="' . esc_attr( $file ) . '">Check Update</a>';
+		}
+		return $links;
+	}
+
+	public function ajax_check_update() {
+		if ( ! current_user_can( 'update_plugins' ) ) {
+			wp_send_json_error( 'You do not have permission to perform this action.' );
+			return;
 		}
 	
-		$response = wp_remote_post( 'https://cdn.netpeak.dev/api/check-license-status', array(
-			'headers' => array(
-				'Authorization' => 'Bearer ' . get_option('netpeak_seo_license_auth_token'),
-			),
-			'body' => array(
-				'license_key' => get_option('netpeak_seo_license_key'),
-				'domain'      => $_SERVER['HTTP_HOST'],
-			),
-		));
-		if ( is_wp_error( $response ) ) {
-			return false; 
-		}
-		$body = json_decode( wp_remote_retrieve_body( $response ), true );
-	
-		$license_active = isset( $body['is_valid'] ) && $body['is_valid'] == 1 && isset( $body['is_activate'] ) && $body['is_activate'] == 1;
-	
-		set_transient('netpeak_seo_license_status', $license_active, DAY_IN_SECONDS);
-	
-		return $license_active;
+		delete_site_transient( 'update_plugins' );
+		delete_site_transient( md5($this->config['slug']).'_github_data' );
+		wp_send_json_success( 'Update check completed successfully.' );
 	}
 	
 	

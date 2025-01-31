@@ -5,8 +5,11 @@
     - Improved AJAX handling for forms, resolving submission and response processing issues.
     - Optimized and refactored schema data saving and retrieval mechanisms.
     - Simplified code structure, making it more readable and easier to debug.
-    - Completely refactored the database handler to use an Object-Oriented Programming (OOP) approach for better maintainability and scalability. Enhanced schema and structure functionality to improve data management and overall performance.
+    - Completely refactored the database handler. Enhanced schema and structure functionality to improve data management and overall performance.
     - Fixed issues with the AJAX form handler that caused inconsistencies during data submission.
+- Optimized JS and CSS files 
+- Added [update check button](https://img.netpeak.net/masik/25-01-31_dNRoC.png), improving the method for updating the plugin
+
 ---
 
 # 1.0.6

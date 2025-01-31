@@ -1,6 +1,10 @@
 <?php
 include NETPEAK_SEO_COMPONENTS_ADMIN . 'tab-header.php';
-include NETPEAK_SEO_PLUGIN_DIR . 'assets/js/license-switch.php';
+// Include the license switcher
+wp_enqueue_script('netpeak-license-switch-js', NETPEAK_SEO_PLUGIN_URL . 'assets/js/license-switch.js', ['jquery'], null, true);
+wp_enqueue_style('netpeak-license-switch-css', NETPEAK_SEO_PLUGIN_URL . 'assets/css/license-switch.css');
+wp_localize_script('netpeak-license-switch-js', 'NetpeakData',['license_message' => __('You need to activate the license to use this feature', 'netpeak-seo')]);
+
 if ( ! function_exists( 'is_plugin_active' ) ) {
     include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 }
