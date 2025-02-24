@@ -2,7 +2,6 @@ document.addEventListener('DOMContentLoaded', initLicenseHandler);
 
 function initLicenseHandler() {
     checkLicenseStatus(); 
-    validateLicense();
 }
 
 
@@ -53,12 +52,12 @@ function checkLicenseStatus() {
                     document.getElementById('license-form').style.display = 'none';
                 }
             } else {
-                responseElement.innerHTML = '<p class="status-cdn error-status">Failed to retrieve tokens.</p>';
+                showError('Failed to retrieve tokens');
             }
         })
         .catch(() => {
             hideLoader();
-            responseElement.innerHTML = '<p class="status-cdn error-status">Error retrieving tokens.</p>';
+            showError(NetpeakData.message.error_token);
         });
     }
 }
@@ -99,17 +98,17 @@ async function validateLicense(authToken, licenseKey) {
             if (licenseForm) licenseForm.style.display = 'none';
             responseElement.innerHTML = `
                 <p class="status-cdn success-status">
-                    ${NetpeakData.license_text}
+                    ${data.message}
                     ${data.expires_date ? '</br>' + NetpeakData.messages.expires_on + ' ' + data.expires_date : NetpeakData.messages.lifetime}
                 </p>`;
         } else {
-            responseElement.innerHTML = `<p class="status-cdn error-status">${data.message}</p>`;
+            showError(data.message);
             
             authForm.style.display = 'block';
         }
     } catch (error) {
         hideLoader();
-        showError(NetpeakData.messages.server_error);
+        showError(data.message);
     }
 }
 
@@ -144,7 +143,12 @@ async function authenticateUser(event) {
         showError("Error during authentication.");
     }
 }
-document.getElementById('auth-submit').addEventListener('click', authenticateUser);
+const authSubmitButton = document.getElementById('auth-submit');
+
+if (authSubmitButton) {
+    authSubmitButton.addEventListener('click', authenticateUser);
+}
+
 
 
 async function activateLicense(event) {

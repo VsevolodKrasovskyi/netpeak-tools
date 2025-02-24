@@ -6,8 +6,8 @@ class SchemaHandler {
 
     /**
      * Constructor.
-     *
-     * @since 1.0
+     *create_schema_table
+     * @since 1.0.5
      *
      * @access public
      */

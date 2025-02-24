@@ -1,0 +1,63 @@
+<?php
+/**
+ * Plugin Name: Netpeak Tools
+ * Plugin URI: https://cdn.netpeak.dev/
+ * Description: Basic SEO settings, HTML map generation, and more
+ * Author: Netpeak Dev Team
+ * Author URI: https://netpeak.dev/
+ * Text Domain: netpeak-seo
+ * Domain Path: /languages
+ * Requires at least: 5.7
+ * Requires PHP: 7.0
+ * License: Subscription-based License
+ * License URI: https://cdn.netpeak.dev/license-information
+ * Version: 1.0.8
+ * ███╗   ██╗███████╗████████╗██████╗ ███████╗ █████╗ ██╗  ██╗
+ * ████╗  ██║██╔════╝╚══██╔══╝██╔══██╗██╔════╝██╔══██╗██║ ██╔╝
+ * ██╔██╗ ██║█████╗     ██║   ██████╔╝█████╗  ███████║█████╔╝ 
+ * ██║╚██╗██║██╔══╝     ██║   ██╔═══╝ ██╔══╝  ██╔══██║██╔═██╗ 
+ * ██║ ╚████║███████╗   ██║   ██║     ███████╗██║  ██║██║  ██╗
+ * ╚═╝  ╚═══╝╚══════╝   ╚═╝   ╚═╝     ╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝
+ */
+if ( ! class_exists( 'WP_GitHub_Updater' ) ) {
+    include_once plugin_dir_path( __FILE__ ) . 'inc/functions/updater.php'; 
+}
+
+if ( class_exists( 'WP_GitHub_Updater' ) ) {
+    new WP_GitHub_Updater(array(
+        'slug' => plugin_basename( __FILE__ ),
+        'proper_folder_name' => dirname( plugin_basename( __FILE__ ) ),
+        'api_url' => 'https://api.github.com/repos/VsevolodKrasovskyi/netpeak-tools', 
+        'raw_url' => 'https://raw.githubusercontent.com/VsevolodKrasovskyi/netpeak-tools/prod', 
+        'github_url' => 'https://github.com/VsevolodKrasovskyi/netpeak-tools', 
+        'zip_url' => 'https://github.com/VsevolodKrasovskyi/netpeak-tools/zipball/prod', 
+        'sslverify' => true, 
+        'requires' => '5.2', 
+        'tested' => '6.7.1', 
+        'readme' => 'README.md', 
+        'access_token' => '', 
+        'screenshots' => array(
+            'https://raw.githubusercontent.com/VsevolodKrasovskyi/netpeak-tools/prod/changelog/screenshots/screenshot1.png',
+            'https://raw.githubusercontent.com/VsevolodKrasovskyi/netpeak-tools/prod/changelog/screenshots/screenshot2.png',
+            'https://raw.githubusercontent.com/VsevolodKrasovskyi/netpeak-tools/prod/changelog/screenshots/screenshot3.png',
+        ),
+        'banner'=> 'https://images.netpeak.net/blog/main_691d938eb457d4bc06eae9c59d8cc216c3a161c8.png'
+    ));
+}
+
+
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
+require plugin_dir_path( __FILE__ ) . 'init.php';
+
+
+/*
+* Load plugin textdomain.
+*/
+function netpeak_load_textdomain() {
+    load_plugin_textdomain( 'netpeak-seo', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' ); 
+}
+add_action( 'plugins_loaded', 'netpeak_load_textdomain' );
+

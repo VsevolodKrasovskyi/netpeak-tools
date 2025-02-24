@@ -18,3 +18,39 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
+document.addEventListener('DOMContentLoaded', function () {
+    show_image_full();
+});
+
+function show_image_full() {
+    document.addEventListener('click', function (event) {
+        if (event.target.classList.contains('tooltip-image')) {
+            const image = event.target;
+            const overlay = document.createElement('div');
+            overlay.style.position = 'fixed';
+            overlay.style.top = '0';
+            overlay.style.left = '0';
+            overlay.style.width = '100%';
+            overlay.style.height = '100%';
+            overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+            overlay.style.zIndex = '9999';
+            overlay.style.display = 'flex';
+            overlay.style.justifyContent = 'center';
+            overlay.style.alignItems = 'center';
+
+            const popupImage = document.createElement('img');
+            popupImage.src = image.src;
+            popupImage.style.maxWidth = '90%';
+            popupImage.style.maxHeight = '90%';
+            popupImage.style.objectFit = 'contain';
+
+            overlay.appendChild(popupImage);
+            document.body.appendChild(overlay);
+
+            overlay.addEventListener('click', function () {
+                overlay.remove();
+            });
+        }
+    });
+}

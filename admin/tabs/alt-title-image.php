@@ -39,7 +39,7 @@ if ( ! function_exists( 'is_plugin_active' ) ) {
                     <div class="tooltip" style="margin-left:20px;">
                     <span class="tooltip-icon">?</span>
                         <div class="tooltip-content">
-                            <img src="<?php echo esc_url(NETPEAK_SEO_IMAGE .'elementor-field.gif');?>" alt="Описание с GIF"/>
+                            <img class="tooltip-image" src="<?php echo esc_url(NETPEAK_SEO_IMAGE .'elementor-field.gif');?>" alt="Описание с GIF"/>
                             <p><?php _ex('Adds the ability to set custom alt and title attributes for images in Elementor widgets, improving SEO and content accessibility','tooltip Elementor Alt Title','netpeak-seo');?></p>
                         </div>
                     </div>
@@ -65,7 +65,7 @@ if ( ! function_exists( 'is_plugin_active' ) ) {
                     <div class="tooltip" style="margin-left:20px;">
                     <span class="tooltip-icon">?</span>
                         <div class="tooltip-content">
-                            <img src="<?php echo esc_url(NETPEAK_SEO_IMAGE .'custom_suffix.png');?>" alt="Описание с GIF"/>
+                            <img class="tooltip-image" src="<?php echo esc_url(NETPEAK_SEO_IMAGE .'custom_suffix.png');?>" alt="Описание с GIF"/>
                             <p><?php _ex('Adds a suffix to a title','Alt Title Custom Suffix','netpeak-seo');?></p>
                         </div>
                     </div>

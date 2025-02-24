@@ -1,3 +1,8 @@
+# 1.0.8
+- Fix bugs
+
+---
+
 # 1.0.7
 
 **PLUGIN**
@@ -10,6 +15,9 @@
 - Optimized JS and CSS files 
 - Added [update check button](https://img.netpeak.net/masik/25-01-31_dNRoC.png), improving the method for updating the plugin
 
+**CDN**
+    - Added ability to edit profile
+    - Added ability to restore password
 ---
 
 # 1.0.6

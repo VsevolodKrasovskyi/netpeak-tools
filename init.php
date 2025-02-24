@@ -58,8 +58,8 @@ function netpeak_load_assets() {
             'auth_required'   => __('Authorization required. Please log in again.', 'netpeak-seo'),
             'invalid_license' => __('License is invalid. Please contact support.', 'netpeak-seo'),
             'not_found'       => __('License not found. Please check your license key.', 'netpeak-seo'),
-            'server_error'    => __('Server error. Please try again later.', 'netpeak-seo'),
-            'generic_error'   => __('An error occurred while checking the license status.', 'netpeak-seo')
+            'generic_error'   => __('An error occurred while checking the license status.', 'netpeak-seo'),
+            'error_token'     =>__('Error retrieving tokens','netpeak-seo')
         ]
     ]);
     wp_enqueue_style( 'netpeak-admin-style', NETPEAK_SEO_PLUGIN_URL . 'assets/css/admin.css' );
