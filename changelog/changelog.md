@@ -1,4 +1,16 @@
-# 1.0.8
+# 1.0.9
+**PLUGIN**
+- Fix bugs
+- Enhanced CDN script transport security
+- Improved encryption mechanisms
+
+**CDN**
+- Minor bug fixes and optimizations
+- Improved encryption mechanisms
+
+---
+
+# 1.0.9
 - Fix bugs
 
 ---

@@ -12,7 +12,6 @@
 # with this source code.
 #
 #
-
 class Parsedown
 {
     # ~

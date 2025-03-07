@@ -1,129 +1,119 @@
 <?php
 
 namespace NetpeakTools;
+
 class CDN {
     private $cacheManager;
     private $licenseKey;
     private $currentDomain;
 
-    /**
-     * CDN constructor.
-     *
-     * @since 1.0.5
-     *
-     * @param string $cacheRootDir The root directory for caching.
-     */
     public function __construct() {
-        $this->cacheManager = new CacheManager(WP_CONTENT_DIR . '/cache/netpeak/tools');
-        $this->licenseKey = get_option('netpeak_seo_license_key');
-        $this->currentDomain = $_SERVER['HTTP_HOST'];
+        $this->cacheManager   = new CacheManager(WP_CONTENT_DIR . '/cache/netpeak/tools');
+        $this->licenseKey     = get_option('netpeak_seo_license_key');
+        $this->currentDomain  = $_SERVER['HTTP_HOST'];
     }
 
-    // Function for adding a message to admin_notices
-    private function addAdminNotice($message, $type = 'error') {
-        set_transient('netpeak_seo_admin_notice', ['message' => $message, 'type' => $type], 30);
-    }
-
-    // Hook to display the message
-    public static function displayAdminNotice() {
-        if ($notice = get_transient('netpeak_seo_admin_notice')) {
-            $class = $notice['type'] === 'success' ? 'notice-success' : 'notice-error';
-            echo "<div class='notice {$class} is-dismissible'><p>{$notice['message']}</p></div>";
-            delete_transient('netpeak_seo_admin_notice');
-        }
-    }
-
-    // Authentication and token retrieval function
     private function getCdnToken() {
         $email = get_option('netpeak_seo_license_email'); 
         $password = get_option('netpeak_seo_license_password'); 
-
+    
         $response = wp_remote_post('https://cdn.netpeak.dev/api/login', [
             'body' => [
-                'email' => $email,
+                'email'    => $email,
                 'password' => $password,
             ],
         ]);
-
+    
         if (is_wp_error($response)) {
-            $this->addAdminNotice(__('CDN authentication error:', 'netpeak-seo') . ' ' . $response->get_error_message());
+            error_log("CDN Error: " . $response->get_error_message());
             return false;
         }
-
+    
         $data = json_decode(wp_remote_retrieve_body($response), true);
-
-        if (isset($data['success']) && $data['success']) {
-            return $data['token']; // return token
-        } else {
-            $this->addAdminNotice(__('Failed to get the token:', 'netpeak-seo') . ' ' . ($data['message'] ?? __('Unknown error', 'netpeak-seo')));
-            return false;
-        }
+        return $data['success'] ? $data['token'] : false;
     }
 
-    // Function for downloading and executing a script from CDN
     public function load_cdn_script($scriptName) {
         if (!$this->licenseKey) {
-            $this->addAdminNotice(__('License key is missing. Unable to load the script.', 'netpeak-seo'));
-            $this->cacheManager->clear();
+            error_log("CDN Error: License key missing");
             return;
         }
 
-        $cacheKey = 'netpeak_seo_cdn_script_' . md5($scriptName);
-        $cachedData = $this->cacheManager->get($cacheKey);
-
-        // If the script is in the cache, check its integrity and use
-        if ($cachedData) {
-            $cachedHash = $this->cacheManager->get($cacheKey . '_hash');
-            $decryptedScript = openssl_decrypt($cachedData, 'AES-256-CBC', $this->licenseKey, 0, substr($this->licenseKey, 0, 16));
-
-            if ($decryptedScript && hash('sha256', $decryptedScript) === $cachedHash) {
-                eval('?>' . $decryptedScript);
-                return;
-            }
+        $cacheKey = 'netpeak_seo_cdn_script_' . hash_hmac('sha256', $scriptName, 'super_secret_salt');
+        
+        $cachedScript = $this->cacheManager->get($cacheKey);
+        if ($cachedScript) {
+            $this->include_script($cachedScript, $scriptName);
+            return;
         }
 
-        // If the script is not found in the cache, request it from the CDN
         $token = $this->getCdnToken();
         if (!$token) {
-            $this->addAdminNotice(__('Authentication Error. Failed to get a token to load the script.', 'netpeak-seo'));
+            error_log("CDN Error: Unable to get token");
             return;
         }
 
-        $cdnScriptUrl = "https://cdn.netpeak.dev/api/load-script/{$scriptName}";
-        $response = wp_remote_post($cdnScriptUrl, [
-            'headers' => [
-                'Authorization' => 'Bearer ' . $token,
-            ],
+        $response = wp_remote_post("https://cdn.netpeak.dev/api/load-script/{$scriptName}", [
+            'headers' => ['Authorization' => 'Bearer ' . $token],
             'body' => [
                 'license_key' => $this->licenseKey,
-                'domain' => $this->currentDomain,
+                'domain'      => $this->currentDomain
             ],
         ]);
 
         if (is_wp_error($response)) {
-            $this->addAdminNotice(__('Error loading script from CDN:', 'netpeak-seo') . ' ' . $response->get_error_message());
-            $this->cacheManager->clear();
+            error_log("CDN Error: Request failed - " . $response->get_error_message());
             return;
         }
 
-        $body = wp_remote_retrieve_body($response);
-        $data = json_decode($body, true);
+        $data = json_decode(wp_remote_retrieve_body($response), true);
+        if (empty($data['success'])) {
+            error_log("CDN Error: Failed to load script $scriptName");
+            return;
+        }
 
-        if (isset($data['success']) && $data['success']) {
-            $scriptContentBase64 = $data['script'];
-            $scriptContent = base64_decode($scriptContentBase64);
+        $encryptedScriptBase64 = $data['script'];
+        $serverHash            = $data['hash'];
 
-            $encryptedScript = openssl_encrypt($scriptContent, 'AES-256-CBC', $this->licenseKey, 0, substr($this->licenseKey, 0, 16));
-            $hash = hash('sha256', $scriptContent);
-            $this->cacheManager->set($cacheKey, $encryptedScript, HOUR_IN_SECONDS);
-            $this->cacheManager->set($cacheKey . '_hash', $hash, HOUR_IN_SECONDS);
+        $key = hash('sha256', $this->licenseKey, true);
 
-            eval('?>' . $scriptContent);
-        } else {
-            $this->addAdminNotice(__('Netpeak SEO Tools:', 'netpeak-seo') . ' ' . ($data['message'] ?? __('Unknown error', 'netpeak-seo')));
+        $computedHash = hash_hmac('sha256', $encryptedScriptBase64, $key);
+        if ($computedHash !== $serverHash) {
+            error_log("CDN Error: Hash mismatch for script $scriptName");
+            return;
+        }
+
+        $decoded = base64_decode($encryptedScriptBase64);
+        if (!$decoded || strlen($decoded) < 16) {
+            error_log("CDN Error: Invalid encrypted data");
+            return;
+        }
+
+        $iv        = substr($decoded, 0, 16);
+        $encrypted = substr($decoded, 16);
+
+        $decryptedScript = openssl_decrypt($encrypted, 'AES-256-CBC', $key, OPENSSL_RAW_DATA, $iv);
+        if ($decryptedScript === false) {
+            error_log("CDN Error: Decryption failed for script $scriptName");
+            return;
+        }
+
+        $this->cacheManager->set($cacheKey, $decryptedScript, HOUR_IN_SECONDS);
+
+        $this->include_script($decryptedScript, $scriptName);
+    }
+
+    private function include_script($scriptContent, $scriptName) {
+        $tempFile = tempnam(sys_get_temp_dir(), "cdn_{$scriptName}_") . '.php';
+        if (file_put_contents($tempFile, $scriptContent, LOCK_EX) === false) {
+            error_log("CDN Error: Failed to write temporary file for $scriptName");
+            return;
+        }
+
+        include_once $tempFile;
+
+        if (file_exists($tempFile)) {
+            unlink($tempFile);
         }
     }
 }
-
-// Hook to display admin notices
-add_action('admin_notices', [CDN::class, 'displayAdminNotice']);

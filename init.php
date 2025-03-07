@@ -70,10 +70,6 @@ function netpeak_load_assets() {
 add_action('admin_enqueue_scripts', 'netpeak_load_assets');
 
 
-    
-
-
-
 use NetpeakTools\CDN;
 $cdn = new CDN();
 /*

@@ -11,7 +11,7 @@
  * Requires PHP: 7.0
  * License: Subscription-based License
  * License URI: https://cdn.netpeak.dev/license-information
- * Version: 1.0.8
+ * Version: 1.0.9
  * ███╗   ██╗███████╗████████╗██████╗ ███████╗ █████╗ ██╗  ██╗
  * ████╗  ██║██╔════╝╚══██╔══╝██╔══██╗██╔════╝██╔══██╗██║ ██╔╝
  * ██╔██╗ ██║█████╗     ██║   ██████╔╝█████╗  ███████║█████╔╝ 
@@ -35,7 +35,6 @@ if ( class_exists( 'WP_GitHub_Updater' ) ) {
         'requires' => '5.2', 
         'tested' => '6.7.1', 
         'readme' => 'README.md', 
-        'access_token' => '', 
         'screenshots' => array(
             'https://raw.githubusercontent.com/VsevolodKrasovskyi/netpeak-tools/prod/changelog/screenshots/screenshot1.png',
             'https://raw.githubusercontent.com/VsevolodKrasovskyi/netpeak-tools/prod/changelog/screenshots/screenshot2.png',
