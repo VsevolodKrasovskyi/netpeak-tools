@@ -3,7 +3,7 @@
 // Prevent loading this file directly and/or if the class is already defined
 if ( ! defined( 'ABSPATH' ) || class_exists( 'WPGitHubUpdater' ) || class_exists( 'WP_GitHub_Updater' ) )
 	return;
-class Git_Update_Netpeak {
+class WP_GitHub_Updater {
 
 	/**
 	 * GitHub Updater version
@@ -70,7 +70,7 @@ class Git_Update_Netpeak {
 			?>
 			<script>
 				document.addEventListener('DOMContentLoaded', function() {
-					const updateButton = document.querySelector('.netpeak-logger-update');
+					const updateButton = document.querySelector('.netpeak-tools-update');
 					if ( updateButton ) {
 						updateButton.addEventListener('click', e=> {
 							e.preventDefault();
@@ -362,7 +362,7 @@ class Git_Update_Netpeak {
 		$current_version = $this->config['version'];
 	
 		if (version_compare($new_version, $current_version, '>')) {
-			$response = new \stdClass();
+			$response = new stdClass();
 			$response->new_version = $new_version;
 			$response->slug = $this->config['slug'];
 			$response->plugin = $this->config['slug'];
@@ -440,7 +440,7 @@ class Git_Update_Netpeak {
 		// if ( !isset( $response->slug ) || dirname( $this->config['slug'] ) != $response->slug ) {
 		// 	return false;
 		// }
-		$response = new \stdClass();
+		$response = new stdClass();
 		$response->slug = $this->config['slug'];
 		$response->name = $this->config['plugin_name'];
 		$response->version = $this->config['new_version'];
@@ -472,7 +472,7 @@ class Git_Update_Netpeak {
 	 */
 	public function add_check_update_button( $links, $file ) {
 		if ( $file === $this->config['slug'] ) {
-			$links[] = '<a href="#" class="netpeak-logger-update" data-plugin="' . esc_attr( $file ) . '" data-plugin-slug="' . esc_attr( $this->config['proper_folder_name'] ) . '">Check Update</a>';
+			$links[] = '<a href="#" class="netpeak-tools-update" data-plugin="' . esc_attr( $file ) . '" data-plugin-slug="' . esc_attr( $this->config['proper_folder_name'] ) . '">Check Update</a>';
 		}
 		return $links;
 	}
@@ -497,7 +497,7 @@ class Git_Update_Netpeak {
 	
 		$transient = get_site_transient('update_plugins');
 		if (!is_object($transient)) {
-			$transient = new \stdClass();
+			$transient = new stdClass();
 		}
 	
 		if (!isset($transient->response)) {
@@ -506,7 +506,7 @@ class Git_Update_Netpeak {
 	
 		$update = version_compare($new_version, $current_version, '>');
 		if ($update) {
-			$response = new \stdClass();
+			$response = new stdClass();
 			$response->new_version = $new_version;
 			$response->slug = $this->config['slug'];
 			$response->plugin = $this->config['slug'];

@@ -23,7 +23,8 @@ if ( ! class_exists( 'WP_GitHub_Updater' ) ) {
     include_once plugin_dir_path( __FILE__ ) . 'inc/functions/updater.php'; 
 }
 
-if ( class_exists( 'WP_GitHub_Updater' ) ) {
+
+function load_updater_netpeak_tools(){
     new WP_GitHub_Updater(array(
         'slug' => plugin_basename( __FILE__ ),
         'proper_folder_name' => dirname( plugin_basename( __FILE__ ) ),
@@ -43,7 +44,7 @@ if ( class_exists( 'WP_GitHub_Updater' ) ) {
         'banner'=> 'https://images.netpeak.net/blog/main_691d938eb457d4bc06eae9c59d8cc216c3a161c8.png'
     ));
 }
-
+add_action('admin_init', 'load_updater_netpeak_tools'); 
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
