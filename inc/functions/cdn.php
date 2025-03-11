@@ -6,18 +6,26 @@ class CDN {
     private $cacheManager;
     private $licenseKey;
     private $currentDomain;
+    private $base_Api;
 
     public function __construct() {
         $this->cacheManager   = new CacheManager(WP_CONTENT_DIR . '/cache/netpeak/tools');
         $this->licenseKey     = get_option('netpeak_seo_license_key');
-        $this->currentDomain  = $_SERVER['HTTP_HOST'];
+        $this->currentDomain  = parse_url(home_url(), PHP_URL_HOST);
+        $this->base_Api       = 'https://cdn.netpeak.dev/api/';
+    }
+
+    //Getter
+    public function getBaseApi()
+    {
+        return $this->base_Api;
     }
 
     private function getCdnToken() {
         $email = get_option('netpeak_seo_license_email'); 
         $password = get_option('netpeak_seo_license_password'); 
     
-        $response = wp_remote_post('https://cdn.netpeak.dev/api/login', [
+        $response = wp_remote_post( $this->base_Api . 'login', [
             'body' => [
                 'email'    => $email,
                 'password' => $password,
@@ -53,7 +61,7 @@ class CDN {
             return;
         }
 
-        $response = wp_remote_post("https://cdn.netpeak.dev/api/load-script/{$scriptName}", [
+        $response = wp_remote_post( $this->base_Api . "load-script/{$scriptName}", [
             'headers' => ['Authorization' => 'Bearer ' . $token],
             'body' => [
                 'license_key' => $this->licenseKey,

@@ -11,7 +11,7 @@
  * Requires PHP: 7.0
  * License: Subscription-based License
  * License URI: https://cdn.netpeak.dev/license-information
- * Version: 1.0.9
+ * Version: 1.0.10
  * ███╗   ██╗███████╗████████╗██████╗ ███████╗ █████╗ ██╗  ██╗
  * ████╗  ██║██╔════╝╚══██╔══╝██╔══██╗██╔════╝██╔══██╗██║ ██╔╝
  * ██╔██╗ ██║█████╗     ██║   ██████╔╝█████╗  ███████║█████╔╝ 
@@ -19,13 +19,43 @@
  * ██║ ╚████║███████╗   ██║   ██║     ███████╗██║  ██║██║  ██╗
  * ╚═╝  ╚═══╝╚══════╝   ╚═╝   ╚═╝     ╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝
  */
-if ( ! class_exists( 'WP_GitHub_Updater' ) ) {
-    include_once plugin_dir_path( __FILE__ ) . 'inc/functions/updater.php'; 
+
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+/*
+ * - Constants - 
+ * @author Netpeak Dev
+ * @since 1.0.0
+*/
+// Define constants for plugin paths and URLs
+if ( ! defined( 'NETPEAK_SEO_PLUGIN_DIR' ) ) {
+    define( 'NETPEAK_SEO_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 }
 
+if ( ! defined( 'NETPEAK_SEO_COMPONENTS_ADMIN' ) ) {
+    define( 'NETPEAK_SEO_COMPONENTS_ADMIN', NETPEAK_SEO_PLUGIN_DIR . 'admin/components/' );
+}
+
+if ( ! defined( 'NETPEAK_SEO_PLUGIN_URL' ) ) {
+    define( 'NETPEAK_SEO_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
+}
+
+if ( ! defined( 'NETPEAK_SEO_IMAGE' ) ) {
+    define( 'NETPEAK_SEO_IMAGE', NETPEAK_SEO_PLUGIN_URL . 'assets/img/' );
+}
+if ( ! defined( 'NETPEAK_SEO_VERSION' ) ) {
+    define( 'NETPEAK_SEO_VERSION', '1.0.10' );
+}
+
+use Netpeak\Updater_GIT;
+
+if (file_exists(NETPEAK_SEO_PLUGIN_DIR . '/vendor/autoload.php')) {
+    require_once NETPEAK_SEO_PLUGIN_DIR . '/vendor/autoload.php';
+}
 
 function load_updater_netpeak_tools(){
-    new WP_GitHub_Updater(array(
+    new Updater_GIT(array(
         'slug' => plugin_basename( __FILE__ ),
         'proper_folder_name' => dirname( plugin_basename( __FILE__ ) ),
         'api_url' => 'https://api.github.com/repos/VsevolodKrasovskyi/netpeak-tools', 

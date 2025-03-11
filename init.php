@@ -5,32 +5,6 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-/*
- * - Constants - 
- * @author Netpeak Dev
- * @since 1.0.0
-*/
-// Define constants for plugin paths and URLs
-if ( ! defined( 'NETPEAK_SEO_PLUGIN_DIR' ) ) {
-    define( 'NETPEAK_SEO_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
-}
-
-if ( ! defined( 'NETPEAK_SEO_COMPONENTS_ADMIN' ) ) {
-    define( 'NETPEAK_SEO_COMPONENTS_ADMIN', NETPEAK_SEO_PLUGIN_DIR . 'admin/components/' );
-}
-
-if ( ! defined( 'NETPEAK_SEO_PLUGIN_URL' ) ) {
-    define( 'NETPEAK_SEO_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
-}
-
-if ( ! defined( 'NETPEAK_SEO_IMAGE' ) ) {
-    define( 'NETPEAK_SEO_IMAGE', NETPEAK_SEO_PLUGIN_URL . 'assets/img/' );
-}
-if ( ! defined( 'NETPEAK_SEO_VERSION' ) ) {
-    define( 'NETPEAK_SEO_VERSION', '1.0.7' );
-}
-
-
 // Include admin menu if in the admin area
 if ( is_admin() ) {
     require_once NETPEAK_SEO_PLUGIN_DIR . 'admin/menu.php';
@@ -43,15 +17,20 @@ require_once NETPEAK_SEO_PLUGIN_DIR . 'inc/functions/cdn.php';
 require_once NETPEAK_SEO_PLUGIN_DIR . 'inc/functions/CacheManager.php';
 require_once NETPEAK_SEO_PLUGIN_DIR . 'inc/functions/AjaxHandler.php';
 
+//Include Class
+use NetpeakTools\CDN;
+$cdn = new CDN();
+
 function netpeak_load_assets() {
+    $cdn = new \NetpeakTools\CDN(); 
     wp_enqueue_script('netpeak-license', NETPEAK_SEO_PLUGIN_URL . 'assets/js/license.js', array(), null, true);
     wp_localize_script('netpeak-license', 'NetpeakData', [
         'ajax_url'      => admin_url('admin-ajax.php'),
-        'site_domain'   => $_SERVER['HTTP_HOST'],
+        'site_domain'   => parse_url(home_url(), PHP_URL_HOST),
         'license_text'  => __('License is active and valid.', 'netpeak-seo'),
-        'login_api'     => 'https://cdn.netpeak.dev/api/login',
-        'license_api'   => 'https://cdn.netpeak.dev/api/check-license-status',
-        'activate_api'  => 'https://cdn.netpeak.dev/api/activate-license',
+        'login_api'     => $cdn->getBaseApi() . 'login',
+        'license_api'   => $cdn->getBaseApi() . 'check-license-status',
+        'activate_api'  => $cdn->getBaseApi() . 'activate-license',
         'messages'      => [
             'expires_on'      => __('Expires on:', 'netpeak-seo'),
             'lifetime'        => __('Lifetime license.', 'netpeak-seo'),
@@ -70,8 +49,7 @@ function netpeak_load_assets() {
 add_action('admin_enqueue_scripts', 'netpeak_load_assets');
 
 
-use NetpeakTools\CDN;
-$cdn = new CDN();
+
 /*
  * - Alt & Title Image Tool
  * - Sitemap Tool

@@ -1,3 +1,10 @@
+# 1.0.10
+**PLUGIN**
+- Fixed bug with Updater_GIT class - conflicts with Netpeak Logger plugins
+- Added class Added class autoloader, refactoring of Updater_GIT classautoloader, refactoring of Updater_GIT class
+
+---
+
 # 1.0.9
 **PLUGIN**
 - Fix bugs
