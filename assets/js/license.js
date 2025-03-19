@@ -1,12 +1,16 @@
 document.addEventListener('DOMContentLoaded', initLicenseHandler);
 
 function initLicenseHandler() {
-    checkLicenseStatus(); 
+    checkLicenseStatus();
 }
 
-
-const loaderElement = document.getElementById('loader');
-const responseElement = document.getElementById('netpeak-license-response');
+//elements
+const loaderElement = document.getElementById('loader') || null;
+const responseElement = document.getElementById('netpeak-license-response') || null;
+const authForm = document.getElementById('auth-form') || null;
+const licenseForm = document.getElementById('license-form') || null;
+const authSubmitButton = document.getElementById('auth-submit') || null;
+const licenseSubmitButton = document.getElementById('license-submit') || null;
 
 function showLoader() {
     if (loaderElement && responseElement) {
@@ -21,103 +25,86 @@ function hideLoader() {
         responseElement.style.display = 'block';
     }
 }
+//Cookies
+function getCookie(name) {
+    let match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+    return match ? match[2] : null;
+}
 
+function setCookie(name, value, days = 7) {
+    let expires = new Date();
+    expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
+    document.cookie = `${name}=${value};expires=${expires.toUTCString()}secure=true;SameSite=Strict;path=/wp-admin`;
+}
+
+function setSessionCookie(name, value) {
+    document.cookie = `${name}=${value};secure=true;SameSite=Strict;path=/wp-admin`;
+}
+
+function deleteCookie(name) {
+    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/wp-admin`;
+}
 
 function checkLicenseStatus() {
-    let authToken = localStorage.getItem("authToken");
-    let licenseKey = localStorage.getItem("licenseKey");
+    let authToken = getCookie("NP_AUTH_TOKEN");
+    let licenseKey = getCookie("NP_LICENSE_KEY");
 
     if (authToken && licenseKey) {
         validateLicense(authToken, licenseKey);
     } else {
-        showLoader();
-        fetch(NetpeakData.ajax_url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: new URLSearchParams({ action: 'get_license_tokens' })
-        })
-        .then(response => response.json())
-        .then(data => {
-            hideLoader();
-            if (data.success) {
-                authToken = data.data.authToken;
-                licenseKey = data.data.licenseKey;
-
-                if (authToken && licenseKey) {
-                    localStorage.setItem("authToken", authToken);
-                    localStorage.setItem("licenseKey", licenseKey);
-                    validateLicense(authToken, licenseKey);
-                } else {
-                    document.getElementById('auth-form').style.display = 'block';
-                    document.getElementById('license-form').style.display = 'none';
-                }
-            } else {
-                showError('Failed to retrieve tokens');
-            }
-        })
-        .catch(() => {
-            hideLoader();
-            showError(NetpeakData.message.error_token);
-        });
+        showAuthForm();
+        disableLicensedFeatures();
     }
 }
 
-
-/**
- * Validate the license by making an API request
- *
- * @param {string} authToken The authentication token
- * @param {string} licenseKey The license key
- *
- * @throws {Error} On server error
- */
 async function validateLicense(authToken, licenseKey) {
     try {
         showLoader();
-
         let response = await fetch(NetpeakData.license_api, {
             method: 'POST',
             headers: {
                 'Authorization': 'Bearer ' + authToken,
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                license_key: licenseKey,
-                domain: NetpeakData.site_domain
-            })
+                license_key: licenseKey, 
+                domain: NetpeakData.site_domain })
         });
 
         let data = await response.json();
         hideLoader();
 
-        const authForm = document.getElementById('auth-form');
-        const licenseForm = document.getElementById('license-form');
-
         if (data.success && data.is_valid && data.is_activate) {
             if (authForm) authForm.style.display = 'none';
             if (licenseForm) licenseForm.style.display = 'none';
-            responseElement.innerHTML = `
-                <p class="status-cdn success-status">
-                    ${data.message}
-                    ${data.expires_date ? '</br>' + NetpeakData.messages.expires_on + ' ' + data.expires_date : NetpeakData.messages.lifetime}
-                </p>`;
+            if (responseElement) responseElement.innerHTML = `<p class="status-cdn success-status">${data.message}<br/>Expires on: ${data.expires_date || 'Lifetime'}</p>`;
+            enableLicensedFeatures();
         } else {
-            showError(data.message);
-            
-            authForm.style.display = 'block';
+            showAuthForm();
+            disableLicensedFeatures();
         }
     } catch (error) {
         hideLoader();
-        showError(data.message);
+        showAuthForm();
+        disableLicensedFeatures();
     }
 }
 
-
-async function authenticateUser(event) {
+async function login(event) {
     event.preventDefault();
     showLoader();
-    let email = document.querySelector('[name="email"]').value;
-    let password = document.querySelector('[name="password"]').value;
+
+    let emailInput = document.querySelector('[name="email"]');
+    let passwordInput = document.querySelector('[name="password"]');
+
+    if (!emailInput || !passwordInput) {
+        hideLoader();
+        showError("Email or password field missing.");
+        return;
+    }
+
+    let email = emailInput.value.trim();
+    let password = passwordInput.value.trim();
 
     try {
         let response = await fetch(NetpeakData.login_api, {
@@ -130,43 +117,78 @@ async function authenticateUser(event) {
         hideLoader();
 
         if (data.success) {
-            localStorage.setItem("authToken", data.token);
-            saveCredentials(email, password);
-            document.getElementById('auth-form').style.display = 'none';
-            document.getElementById('license-form').style.display = 'block';
-            responseElement.innerHTML = `<p class="status-cdn success-status">Authentication successful. Please enter your license key.</p>`;
+            if (data.token) {
+                // The server returned a new token - save to cookie
+                setCookie("NP_AUTH_TOKEN", data.token);
+                setSessionCookie("NP_LOGIN_EMAIL", email);
+                setSessionCookie("NP_LOGIN_PASSWORD", password);
+                showLicenseForm();
+            } else if (data.message === "Token still valid") {
+                // If the token is still valid - check the licence via AJAX
+                try {
+                    let licenseResponse = await fetch(NetpeakData.ajax_url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: new URLSearchParams({ action: 'get_license_tokens' })
+                    });
+
+                    let licenseData = await licenseResponse.json();
+
+                    if (licenseData.success) {
+                        setCookie("NP_AUTH_TOKEN", licenseData.data.token);
+                        setSessionCookie("NP_LOGIN_EMAIL", email);
+                        setSessionCookie("NP_LOGIN_PASSWORD", password);
+                        showLicenseForm();
+                    } else {
+                        showError("Failed to retrieve license tokens.");
+                        showAuthForm();
+                    }
+                } catch (error) {
+                    showError("Error retrieving license tokens.");
+                    showAuthForm();
+                }
+            }
         } else {
-            showError(data.message);
+            showError(data.message || "Login failed.");
+            showAuthForm();
         }
-    } catch {
+    } catch (error) {
         hideLoader();
         showError("Error during authentication.");
+        showAuthForm();
     }
 }
-const authSubmitButton = document.getElementById('auth-submit');
 
-if (authSubmitButton) {
-    authSubmitButton.addEventListener('click', authenticateUser);
-}
-
-
+authSubmitButton?.addEventListener('click', login);
 
 async function activateLicense(event) {
     event.preventDefault();
 
-    let authToken = localStorage.getItem("authToken");
+    let authToken = getCookie("NP_AUTH_TOKEN");
+    let password = getCookie("NP_LOGIN_PASSWORD");
+    let email = getCookie("NP_LOGIN_EMAIL");
+
     if (!authToken) {
         showError(NetpeakData.messages.auth_required);
         return;
     }
 
-    let licenseKey = document.querySelector('[name="license-key"]').value;
+    let licenseKeyInput = document.querySelector('[name="license-key"]');
+    if (!licenseKeyInput) {
+        showError("License key field is missing.");
+        return;
+    }
+
+    let licenseKey = licenseKeyInput.value;
     showLoader();
 
     try {
         let response = await fetch(NetpeakData.activate_api, {
             method: 'POST',
-            headers: { 'Authorization': 'Bearer ' + authToken, 'Content-Type': 'application/json' },
+            headers: { 
+                'Authorization': 'Bearer ' + authToken, 
+                'Content-Type': 'application/json',
+            },
             body: JSON.stringify({ domain: NetpeakData.site_domain, key: licenseKey })
         });
 
@@ -174,95 +196,93 @@ async function activateLicense(event) {
         hideLoader();
 
         if (data.success) {
-            saveTokens(authToken, licenseKey);
-            checkLicenseStatus();
-            responseElement.innerHTML = `<p class="status-cdn success-status">License verification successful: License is valid and activated.</p>`;
+            setCookie("NP_LICENSE_KEY", licenseKey);
+            saveLicenseDataToDB(authToken, licenseKey, email, password);
+            deleteCookie("NP_LOGIN_PASSWORD");
+            deleteCookie("NP_LOGIN_EMAIL");
         } else {
-            showError(data.message || NetpeakData.messages.invalid_license);
+            showError(data.message || "Activation failed.");
         }
-    } catch {
+    } catch (error) {
         hideLoader();
         showError("An error occurred while activating the license.");
     }
 }
-const licenseSubmit = document.getElementById('license-submit')
-if (licenseSubmit) {
-    licenseSubmit.addEventListener('click', activateLicense);
-}
+
+licenseSubmitButton?.addEventListener('click', activateLicense);
 
 
-async function saveTokens(authToken, licenseKey) {
-    if (authToken) localStorage.setItem("authToken", authToken);
-    if (licenseKey) localStorage.setItem("licenseKey", licenseKey);
-
+async function saveLicenseDataToDB(authToken, licenseKey, email, password) {
     try {
-        await fetch(NetpeakData.ajax_url, {
+        let response = await fetch(NetpeakData.ajax_url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: new URLSearchParams({
-                action: 'save_license_tokens',
-                authToken,
-                licenseKey
-            })
-        });
-    } catch {
-        showError("Failed to save tokens.");
-    }
-}
-
-
-function removeTokens() {
-    localStorage.removeItem("authToken");
-    localStorage.removeItem("licenseKey");
-    saveTokens('', '');
-}
-
-async function saveCredentials(email, password) {
-    if (email) localStorage.setItem("email", email);
-    if (password) localStorage.setItem("password", password);
-
-    try {
-        await fetch(NetpeakData.ajax_url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: new URLSearchParams({
-                action: 'save_credentials',
+            body: new URLSearchParams({ 
+                action: 'save_license_tokens', 
+                authToken, 
+                licenseKey,
                 email,
                 password
             })
         });
-    } catch {
-        showError("Failed to save credentials.");
+
+        let data = await response.json();
+
+        if (data.success) {
+            deleteCookie("NP_LOGIN_EMAIL");
+            deleteCookie("NP_LOGIN_PASSWORD");
+            checkLicenseStatus();
+        } else {
+            showError("Failed to save license data.");
+        }
+    } catch (error) {
+        showError("Failed to save license data.");
     }
+}
+//Forms
+function showAuthForm() {
+    if(authForm) authForm.style.display = 'block';
+    if(licenseForm) licenseForm.style.display = 'none';
+    showError("Please log in.");
+}
+function showLicenseForm() {
+    if(authForm) authForm.style.display = 'none';
+    if(licenseForm) licenseForm.style.display = 'block';
+    showSuccess("Login successful. Please enter your license key.");
 }
 
 function showError(message) {
-    if (responseElement)
-    {
+    if (responseElement) {
         responseElement.innerHTML = `<p class="status-cdn error-status">${message}</p>`;
     }
 }
+function showSuccess(message) {
+    if (responseElement) {
+        responseElement.innerHTML = `<p class="status-cdn success-status">${message}</p>`;
+    }
+}
 
-function get_credentials() {
-    let email = localStorage.getItem("email");
-    let password = localStorage.getItem("password");
-    
-
-    fetch(NetpeakData.ajax_url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({ action: 'get_credentials' })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            localStorage.setItem("email", data.data.email);
-            localStorage.setItem("password", data.data.password);
+function enableLicensedFeatures() {
+    document.querySelectorAll('.licensed-feature').forEach(feature => {
+        feature.classList.remove('disabled');
+        let checkbox = feature.querySelector('.dependent-checkbox');
+        if (checkbox) {
+            checkbox.disabled = false;
         }
-    })
-    .catch(() => {
-        showError("Error retrieving credentials.");
     });
+}
 
-    return { email, password };
+function disableLicensedFeatures() {
+    document.querySelectorAll('.licensed-feature').forEach(feature => {
+        feature.classList.add('disabled');
+        let checkbox = feature.querySelector('.dependent-checkbox');
+        if (checkbox) {
+            checkbox.disabled = true;
+            checkbox.checked = false;
+        }
+        
+        if (NetpeakData.messages.license_required) {
+            feature.setAttribute('data-license-message', NetpeakData.messages.license_required);
+        }
+    });
 }

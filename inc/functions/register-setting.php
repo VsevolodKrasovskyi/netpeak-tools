@@ -1,10 +1,5 @@
 <?php
 function netpeak_register_settings() {
-    #Alt&Title
-    register_setting('netpeak_seo_alt_title_settings','netpeak_seo_alt_title_enabled');
-    register_setting('netpeak_seo_alt_title_settings','netpeak_seo_alt_title_generate_elementor');
-    register_setting('netpeak_seo_alt_title_settings','netpeak_seo_alt_title_auto_enabled');
-    register_setting('netpeak_seo_alt_title_settings','netpeak_seo_alt_title_suffix');
     #HTML Sitemap
     register_setting( 'netpeak_seo_sitemap_settings', 'netpeak_seo_sitemap_enabled' );
     register_setting( 'netpeak_seo_sitemap_settings', 'netpeak_seo_sitemap_title' );
@@ -13,9 +8,19 @@ function netpeak_register_settings() {
         'sanitize_callback' => 'netpeak_sanitize_array',
         'default' => array(),
     ));
+    register_setting( 'netpeak_seo_sitemap_settings', 'netpeak_seo_sitemap_taxonomy', array(
+        'type' => 'array',
+        'sanitize_callback' => 'netpeak_sanitize_array',
+        'default' => array(),
+    ));
     register_setting('netpeak_seo_sitemap_settings', 'netpeak_seo_sitemap_exclude_posts', array(
         'type' => 'array',
-        'sanitize_callback' => 'netpeak_sanitize_array_exclude_posts',
+        'sanitize_callback' => 'netpeak_sanitize_array_exclude',
+        'default' => array(),
+    ));
+    register_setting('netpeak_seo_sitemap_settings', 'netpeak_seo_sitemap_exclude_taxonomies', array(
+        'type' => 'array',
+        'sanitize_callback' => 'netpeak_sanitize_array_exclude',
         'default' => array(),
     ));
     #Redirect
@@ -52,7 +57,7 @@ function netpeak_sanitize_array($input) {
     return is_array($input) ? array_map('sanitize_text_field', $input) : array();
 }
 
-function netpeak_sanitize_array_exclude_posts($input) {
+function netpeak_sanitize_array_exclude($input) {
     if (is_array($input)) {
         return array_map('intval', $input); 
     }

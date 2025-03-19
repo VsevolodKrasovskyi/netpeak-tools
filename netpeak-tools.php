@@ -11,7 +11,7 @@
  * Requires PHP: 7.0
  * License: Subscription-based License
  * License URI: https://cdn.netpeak.dev/license-information
- * Version: 1.0.10
+ * Version: 1.0.11
  * ███╗   ██╗███████╗████████╗██████╗ ███████╗ █████╗ ██╗  ██╗
  * ████╗  ██║██╔════╝╚══██╔══╝██╔══██╗██╔════╝██╔══██╗██║ ██╔╝
  * ██╔██╗ ██║█████╗     ██║   ██████╔╝█████╗  ███████║█████╔╝ 
@@ -45,7 +45,7 @@ if ( ! defined( 'NETPEAK_SEO_IMAGE' ) ) {
     define( 'NETPEAK_SEO_IMAGE', NETPEAK_SEO_PLUGIN_URL . 'assets/img/' );
 }
 if ( ! defined( 'NETPEAK_SEO_VERSION' ) ) {
-    define( 'NETPEAK_SEO_VERSION', '1.0.10' );
+    define( 'NETPEAK_SEO_VERSION', '1.0.11' );
 }
 
 use Netpeak\Updater_GIT;

@@ -3,16 +3,27 @@
 namespace NetpeakTools;
 
 class CDN {
+    private static $instance;
     private $cacheManager;
     private $licenseKey;
     private $currentDomain;
     private $base_Api;
 
-    public function __construct() {
+    private function __construct() {
         $this->cacheManager   = new CacheManager(WP_CONTENT_DIR . '/cache/netpeak/tools');
         $this->licenseKey     = get_option('netpeak_seo_license_key');
         $this->currentDomain  = parse_url(home_url(), PHP_URL_HOST);
-        $this->base_Api       = 'https://cdn.netpeak.dev/api/';
+        $this->base_Api       = 'https://cdn.netpeak.dev/api/v1/';
+    }
+    public static function getInstance() {
+        if (self::$instance === null) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+    private function __clone() {}
+    public  function __wakeup() {
+        throw new \Exception("Cannot unserialize a singleton.");
     }
 
     //Getter
@@ -24,7 +35,9 @@ class CDN {
     private function getCdnToken() {
         $email = get_option('netpeak_seo_license_email'); 
         $password = get_option('netpeak_seo_license_password'); 
-    
+        $token = get_option('netpeak_seo_license_auth_token');
+
+        // Sending a request
         $response = wp_remote_post( $this->base_Api . 'login', [
             'body' => [
                 'email'    => $email,
@@ -38,8 +51,18 @@ class CDN {
         }
     
         $data = json_decode(wp_remote_retrieve_body($response), true);
+
+        // Check if the token is still valid
+        if (isset($data['success']) && $data['success'] && isset($data['message']) && $data['message'] === "Token still valid") {
+            return $token;
+        }
+        if (isset($data['token']) && isset($data['expires_at'])) {
+            update_option('netpeak_seo_license_auth_token', sanitize_text_field($data['token']));
+        }
+    
         return $data['success'] ? $data['token'] : false;
     }
+    
 
     public function load_cdn_script($scriptName) {
         if (!$this->licenseKey) {

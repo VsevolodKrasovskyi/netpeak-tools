@@ -10,28 +10,19 @@ add_action( 'wp_enqueue_scripts', 'include_style_sitemap' );
 
 
 
-function generate_html_sitemap() {
+function generate_sitemap_posts() {
+    $output = '';
 
-    $output = '<div class="sitemap-container">';
-    $output .= '<ul>';
-
-    // Get the selected posttypes from the options
     $selected_post_types = get_option('netpeak_seo_sitemap_post_types', array());
-    // Get an array of publication IDs for the exception (it should already be an array)
     $exclude_post_ids = get_option('netpeak_seo_sitemap_exclude_posts', array());
-    //Exclude the current page as well
-    $current_page = get_the_ID();
-    $exclude_post_ids[] = $current_page;
-    
-    if (empty($selected_post_types)) {
-        return '<p>No posttapes are selected for display.</p>';
-    }
+    $exclude_post_ids[] = get_the_ID(); // Исключаем текущую страницу
+
     foreach ($selected_post_types as $post_type) {
         $args = array(
-            'post_type' => $post_type,
+            'post_type'      => $post_type,
             'posts_per_page' => -1,
-            'post_status' => 'publish',
-            'post__not_in' => $exclude_post_ids 
+            'post_status'    => 'publish',
+            'post__not_in'   => $exclude_post_ids 
         );
         $posts = get_posts($args);
 
@@ -45,15 +36,58 @@ function generate_html_sitemap() {
             $output .= '</div>';
         }
     }
-    $output .= '</div>';
 
     return $output;
 }
 
-function netpeak_seo_sitemap_shortcode() {
-    return generate_html_sitemap();
+function generate_sitemap_taxonomies() {
+    $output = '';
+
+    $taxonomies = get_option('netpeak_seo_sitemap_taxonomy', array());
+    $exclude_terms = get_option('netpeak_seo_sitemap_exclude_taxonomies', array());
+
+    foreach ($taxonomies as $tax) {
+        $terms = get_terms([
+            'taxonomy'   => $tax,
+            'hide_empty' => true,
+            'exclude'    => $exclude_terms 
+        ]);
+
+        if (!empty($terms) && !is_wp_error($terms)) {
+            $output .= '<div class="sitemap-column">';
+            $output .= '<h2>' . esc_html(get_taxonomy($tax)->label) . '</h2><ul>';
+            foreach ($terms as $category) {
+                $output .= '<li><a href="' . get_term_link($category) . '">' . esc_html($category->name) . '</a></li>';
+            }
+            $output .= '</ul>';
+            $output .= '</div>';
+        }
+    }
+
+    return $output;
 }
-add_shortcode('html_sitemap', 'netpeak_seo_sitemap_shortcode');
+
+function generate_html_sitemap($atts = []) {
+    $atts = shortcode_atts([
+        'only' => 'all' 
+    ], $atts);
+    $output = '<div class="sitemap-container">';
+
+    if ($atts['only'] === 'all' || $atts['only'] === 'post') {
+        $output .= generate_sitemap_posts();
+    }
+    if ($atts['only'] === 'all' || $atts['only'] === 'taxonomy') {
+        $output .= generate_sitemap_taxonomies();
+    }
+
+    $output .= '</div>';
+
+    return $output;
+}
+add_shortcode('html_sitemap', 'generate_html_sitemap');
+
+
+
 
 function create_html_sitemap_page() {
     $page_title = get_option('netpeak_seo_sitemap_title', 'Карта сайта');

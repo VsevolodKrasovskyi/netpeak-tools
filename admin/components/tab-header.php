@@ -5,9 +5,6 @@
     </h1>
 
     <h2 class="nav-tab-wrapper">
-        <a href="<?php echo admin_url( 'admin.php?page=netpeak-seo-alt-title' ); ?>" class="nav-tab netpeak-nav-tab <?php echo isset($_GET['page']) && $_GET['page'] == 'netpeak-seo-alt-title' ? 'netpeak-nav-tab-active' : ''; ?>">
-            <?php esc_html_e( 'Alt&Title Image', 'netpeak-seo' ); ?>
-        </a>
         <a href="<?php echo admin_url( 'admin.php?page=netpeak-seo-html-maps' ); ?>" class="nav-tab netpeak-nav-tab <?php echo isset($_GET['page']) && $_GET['page'] == 'netpeak-seo-html-maps' ? 'netpeak-nav-tab-active' : ''; ?>">
             <?php esc_html_e( 'HTML Maps', 'netpeak-seo' ); ?>
         </a>

@@ -1,15 +1,7 @@
 <?php
 include NETPEAK_SEO_COMPONENTS_ADMIN . 'tab-header.php';
-
-
-// Function for saving email and password
-function netpeak_save_license_credentials($email, $password) {
-    update_option('netpeak_seo_license_email', $email);
-    update_option('netpeak_seo_license_password', $password);
-}
-$license_status = 0;
-$saved_email = get_option('netpeak_seo_license_email', ''); // Retrieving a saved email
-$saved_password = get_option('netpeak_seo_license_password', ''); // Retrieve the saved password
+$saved_email = get_option('netpeak_seo_license_email', '');
+$saved_password = get_option('netpeak_seo_license_password', '');
 $saved_license_key = get_option( 'netpeak_seo_license_key', '' );
 ?>
 

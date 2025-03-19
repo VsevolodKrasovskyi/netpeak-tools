@@ -14,16 +14,6 @@ function netpeak_seo_add_admin_menu() {
         NETPEAK_SEO_IMAGE . 'netpeak-icon.svg'
     );
 
-    // Tab Alt&Title Image
-    add_submenu_page(
-        'netpeak-seo-main',     
-        __( 'Alt&Title Image', 'netpeak-seo' ),          
-        __( 'Alt&Title Image', 'netpeak-seo' ),          
-        'manage_options',                                
-        'netpeak-seo-alt-title',                        
-        'netpeak_seo_alt_title_page'                     
-    );
-
     // Tab HTML Maps
     add_submenu_page(
         'netpeak-seo-main',                       
@@ -81,10 +71,6 @@ add_action( 'admin_menu', 'netpeak_seo_add_admin_menu' );
 */
 
 include NETPEAK_SEO_COMPONENTS_ADMIN . 'widget-dashboard.php';
-
-function netpeak_seo_alt_title_page() {
-    include NETPEAK_SEO_PLUGIN_DIR . 'admin/tabs/alt-title-image.php';
-}
 
 function netpeak_seo_html_maps_page() {
     include NETPEAK_SEO_PLUGIN_DIR . 'admin/tabs/sitemap-html.php';

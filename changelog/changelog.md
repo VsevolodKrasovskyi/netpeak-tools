@@ -1,7 +1,21 @@
+# 1.0.11
+**PLUGIN**
+- Improved authentication security.
+- Implemented session-based cookies, accessible only in `/wp-admin`.
+- Auto-deleting cookies after successful database sync.
+- Strengthened license validation and token management
+- Optimized license verification to reduce API calls.
+- Improved error handling and logging.
+- Refactored JavaScript to Vanilla JS for better performance.
+
+**CDN**
+- Optimized Bearer token distribution—**one token per IP**, reducing unnecessary requests.
+- Improved UI 
+
 # 1.0.10
 **PLUGIN**
 - Fixed bug with Updater_GIT class - conflicts with Netpeak Logger plugins
-- Added class Added class autoloader, refactoring of Updater_GIT classautoloader, refactoring of Updater_GIT class
+- Added class autoloader, refactoring of Updater_GIT classautoloader, refactoring of Updater_GIT class
 
 ---
 

@@ -4,11 +4,6 @@ if (!defined('WP_UNINSTALL_PLUGIN')) {
 }
 
 $options = array(
-    // Alt & Title
-    'netpeak_seo_alt_title_enabled',
-    'netpeak_seo_alt_title_generate_elementor',
-    'netpeak_seo_alt_title_auto_enabled',
-    'netpeak_seo_alt_title_suffix',
     // HTML Sitemap
     'netpeak_seo_sitemap_enabled',
     'netpeak_seo_sitemap_title',
@@ -45,10 +40,6 @@ foreach ($options as $option) {
     delete_option($option); // Remove the default options
     delete_site_option($option); // Remove options for multisites
 }
-//Delete table
-global $wpdb;
-$wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '%netpeak%'");
-//Clear cache directory
 require_once plugin_dir_path(__FILE__) . 'inc/functions/CacheManager.php';
 use NetpeakSEO\CacheManager;
 

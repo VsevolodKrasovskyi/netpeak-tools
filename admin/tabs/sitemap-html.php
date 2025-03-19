@@ -17,6 +17,7 @@ include NETPEAK_SEO_COMPONENTS_ADMIN . 'tab-header.php';
 
         // Get a list of all post types, excluding 'attachment'
         $post_types = get_post_types(array('public' => true), 'objects');
+        $taxonomies = get_taxonomies(array( 'public' => true ), 'objects' );
         ?>
         <table class="form-table">
             <!-- Global Sitemap enable -->
@@ -53,11 +54,51 @@ include NETPEAK_SEO_COMPONENTS_ADMIN . 'tab-header.php';
             </tr>
             <!-- Exclude page by ID -->
             <tr valign="top">
-                <th><?php _ex('Exclude page by ID', 'Sitemap page admin', 'netpeak-seo'); ?></th>
+                <th><?php _ex('Exclude posts by ID', 'Sitemap page admin', 'netpeak-seo'); ?></th>
                 <td>
-                    <input type="text" id="post_id_input" name="netpeak_seo_sitemap_exclude_posts" placeholder="<?php _ex('Enter page IDs separated by commas...','netpeak-seo'); ?>"
+                    <input style="width: 350px;" type="text" id="post_id_input" name="netpeak_seo_sitemap_exclude_posts" placeholder="<?php _ex('Enter page IDs separated by commas...','netpeak-seo'); ?>"
                         value="<?php echo esc_attr(implode(',', get_option('netpeak_seo_sitemap_exclude_posts', array()))); ?>" />
+                    <div class="tooltip" style="margin-left:20px;">
+                        <span class="tooltip-icon">?</span>
+                        <div class="tooltip-content">
+                            <img class="tooltip-image" src="<?php echo esc_url(NETPEAK_SEO_PLUGIN_URL . 'assets/img/post_id.png'); ?>"/>
+                            <p><?php _e('Get the ID of the page you want to exclude from the sitemap', 'netpeak-seo'); ?></p>
+                        </div>
+                    </div>
                     <p class="description"><?php _ex('Specify the page IDs to exclude from the sitemap. Use commas to separate multiple IDs.', 'Sitemap page admin', 'netpeak-seo');?></p>
+                    
+                </td>
+            </tr>
+            <!-- Select Taxonomies -->
+            <tr valign="top">
+                <th><?php _ex('Select taxomonies for the sitemap', 'Sitemap page admin', 'netpeak-seo'); ?></th>
+                <td>
+                    <?php foreach ($taxonomies as $tax): ?>
+                        <?php if ($tax->name !== 'attachment'): ?>
+                            <label>
+                                <input type="checkbox" name="netpeak_seo_sitemap_taxonomy[]" value="<?php echo esc_attr($tax->name); ?>"
+                                <?php if (is_array(get_option('netpeak_seo_sitemap_taxonomy'))) checked(in_array($tax->name, get_option('netpeak_seo_sitemap_taxonomy'))); ?> />
+                                <?php echo esc_html($tax->label); ?>
+                            </label><br/>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                </td>
+            </tr>
+            <!-- Exclude taxonomies by ID -->
+            <tr valign="top">
+                <th><?php _ex('Exclude taxonomies by ID', 'Sitemap page admin', 'netpeak-seo'); ?></th>
+                <td>
+                    <input style="width: 350px;" type="text" id="post_id_input" name="netpeak_seo_sitemap_exclude_taxonomies" placeholder="<?php _ex('Enter terms IDs separated by commas...','netpeak-seo'); ?>"
+                        value="<?php echo esc_attr(implode(',', get_option('netpeak_seo_sitemap_exclude_taxonomies', array()))); ?>" />
+                    <div class="tooltip" style="margin-left:20px;">
+                        <span class="tooltip-icon">?</span>
+                        <div class="tooltip-content">
+                            <img class="tooltip-image" src="<?php echo esc_url(NETPEAK_SEO_PLUGIN_URL . 'assets/img/tax_id.png'); ?>"/>
+                            <p><?php _e('Get the ID of the terms you want to exclude from the sitemap', 'netpeak-seo'); ?></p>
+                        </div>
+                    </div>
+                    <p class="description"><?php _ex('Specify the terms IDs to exclude from the sitemap. Use commas to separate multiple IDs.', 'Sitemap page admin', 'netpeak-seo');?></p>
+                    
                 </td>
             </tr>
             <!-- Create Sitemap -->
@@ -74,4 +115,13 @@ include NETPEAK_SEO_COMPONENTS_ADMIN . 'tab-header.php';
         </table>
         <?php submit_button('Save settings'); ?>
     </form>
+    <div class="shortcode-more">
+        <p><?php _e('Do you want to customise?','netpeak-seo');?></p></br>
+        <div class="shortcode-example">
+            <code>[html_sitemap only="taxonomy"]</code><p><?php _e('Outputs all selected taxonomies','netpeak-seo');?></p>
+        </div>
+        <div class="shortcode-example">
+            <code>[html_sitemap only="post"]</code><p><?php _e('Outputs all selected posttypes','netpeak-seo');?></p>
+        </div>
+    </div>
 </div>

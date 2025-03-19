@@ -19,11 +19,11 @@ require_once NETPEAK_SEO_PLUGIN_DIR . 'inc/functions/AjaxHandler.php';
 
 //Include Class
 use NetpeakTools\CDN;
-$cdn = new CDN();
+$cdn = CDN::getInstance();
 
 function netpeak_load_assets() {
-    $cdn = new \NetpeakTools\CDN(); 
-    wp_enqueue_script('netpeak-license', NETPEAK_SEO_PLUGIN_URL . 'assets/js/license.js', array(), null, true);
+    $cdn = CDN::getInstance();
+    wp_enqueue_script('netpeak-license', NETPEAK_SEO_PLUGIN_URL . 'assets/js/license.js', array(), NETPEAK_SEO_VERSION, true);
     wp_localize_script('netpeak-license', 'NetpeakData', [
         'ajax_url'      => admin_url('admin-ajax.php'),
         'site_domain'   => parse_url(home_url(), PHP_URL_HOST),
@@ -31,6 +31,8 @@ function netpeak_load_assets() {
         'login_api'     => $cdn->getBaseApi() . 'login',
         'license_api'   => $cdn->getBaseApi() . 'check-license-status',
         'activate_api'  => $cdn->getBaseApi() . 'activate-license',
+        'auth_token' => get_option('netpeak_seo_license_auth_token'),
+        'license_key' => get_option('netpeak_seo_license_key'),
         'messages'      => [
             'expires_on'      => __('Expires on:', 'netpeak-seo'),
             'lifetime'        => __('Lifetime license.', 'netpeak-seo'),
@@ -38,17 +40,24 @@ function netpeak_load_assets() {
             'invalid_license' => __('License is invalid. Please contact support.', 'netpeak-seo'),
             'not_found'       => __('License not found. Please check your license key.', 'netpeak-seo'),
             'generic_error'   => __('An error occurred while checking the license status.', 'netpeak-seo'),
-            'error_token'     =>__('Error retrieving tokens','netpeak-seo')
-        ]
+            'error_token'     =>__('Error retrieving tokens','netpeak-seo'),
+            'license_required' => __('License is required to use this feature.', 'netpeak-seo'),
+        ],
     ]);
     wp_enqueue_style( 'netpeak-admin-style', NETPEAK_SEO_PLUGIN_URL . 'assets/css/admin.css' );
     wp_enqueue_style( 'netpeak-license-page', NETPEAK_SEO_PLUGIN_URL . 'assets/css/license-page.css' );
     wp_enqueue_script( 'netpeak-tooltip', NETPEAK_SEO_PLUGIN_URL . 'assets/js/tooltip.js', array(), NETPEAK_SEO_VERSION, true );
     wp_enqueue_script( 'netpeak-dependent-checkbox', NETPEAK_SEO_PLUGIN_URL . 'assets/js/dependent-checkbox.js', array(), NETPEAK_SEO_VERSION, true );
+    wp_enqueue_style('netpeak-license-switch-css', NETPEAK_SEO_PLUGIN_URL . 'assets/css/license-switch.css');
 };
 add_action('admin_enqueue_scripts', 'netpeak_load_assets');
-
-
+function add_module_type($tag, $handle, $src) {
+    if ('netpeak-license' === $handle) {
+        $tag = '<script type="module" src="' . esc_url($src) . '"></script>';
+    }
+    return $tag;
+}
+add_filter('script_loader_tag', 'add_module_type', 10, 3);
 
 /*
  * - Alt & Title Image Tool
@@ -58,11 +67,9 @@ add_action('admin_enqueue_scripts', 'netpeak_load_assets');
  * @since 1.0.2
 */
 
-
 $cdn_options = [
     'netpeak_smtp_enabled' => 'mail',
     'netpeak_seo_alt_title_generate_elementor' => 'elementor',
-    'netpeak_seo_alt_title_auto_enabled' => 'auto-alt-title',
 ];
 
 foreach ($cdn_options as $option => $script) {
