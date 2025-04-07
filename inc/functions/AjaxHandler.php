@@ -1,9 +1,7 @@
 <?php
 //SCHEMA & STRUCTURE
 function load_schema_tab() {
-    $tab = isset($_POST['tab']) ? sanitize_text_field($_POST['tab']) : '';
-    
-
+    $tab = isset($_POST['schema-tab']) ? sanitize_text_field($_POST['schema-tab']) : '';
     if ($tab === '') {
         include NETPEAK_SEO_COMPONENTS_ADMIN . 'schemas/intro.php';
     } elseif ($tab === 'organization-and-person') {
@@ -11,7 +9,6 @@ function load_schema_tab() {
     } else {
         echo '<p>Invalid tab.</p>';
     }
-
     wp_die();
 }
 add_action( 'wp_ajax_load_schema_tab', 'load_schema_tab' );
@@ -70,41 +67,3 @@ function save_organization_and_person() {
 }
 
 add_action('wp_ajax_save_organization_and_person', 'save_organization_and_person');
-
-// AJAX handler for license tokens
-add_action('wp_ajax_save_license_tokens', 'save_license_tokens');
-add_action('wp_ajax_get_license_tokens', 'get_license_tokens');
-
-function save_license_tokens() {
-    $updated = false; 
-
-    if (!empty($_POST['authToken']) && !empty($_POST['licenseKey'])) {
-        update_option('netpeak_seo_license_auth_token', sanitize_text_field($_POST['authToken']));
-        update_option('netpeak_seo_license_key', sanitize_text_field($_POST['licenseKey']));
-        $updated = true;
-    }
-
-    if (!empty($_POST['email']) && !empty($_POST['password'])) {
-        update_option('netpeak_seo_license_email', sanitize_email($_POST['email']));
-        update_option('netpeak_seo_license_password', sanitize_text_field($_POST['password']));
-        $updated = true;
-    }
-
-    if ($updated) {
-        wp_send_json_success('Data saved successfully.');
-    } else {
-        wp_send_json_error('No valid data provided.');
-    }
-}
-
-function get_license_tokens() {
-    $auth_token = get_option('netpeak_seo_license_auth_token');
-    if ($auth_token) {
-        wp_send_json_success([
-            'token' => $auth_token
-        ]);
-    } else {
-        wp_send_json_error(['message' => 'Token not found']);
-    }
-}
-

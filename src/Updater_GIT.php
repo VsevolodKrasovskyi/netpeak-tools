@@ -278,10 +278,7 @@ if(!class_exists('Netpeak\Updater_GIT'))
 				$transient->response[$this->config['slug']]->plugin = $this->config['slug'];
 				$transient->response[$this->config['slug']]->url = $this->config['github_url'];
 				$transient->response[$this->config['slug']]->package = $this->config['zip_url'];
-			}
-		
-			error_log("🔄 Updated transient: " . print_r($transient->response, true));
-		
+			}	
 			return $transient;
 		}
 		

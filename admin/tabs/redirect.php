@@ -1,6 +1,3 @@
-<?php
-include NETPEAK_SEO_COMPONENTS_ADMIN . 'tab-header.php';
-?>
 <?php if (get_option('netpeak_seo_redirect_enable') != 1) : ?>
         <div class="notice notice-warning is-dismissible">
             <p><?php _ex('To configure other options, switch on "Enable redirect GLOBAL" option', 'Sitemap page admin', 'netpeak-seo'); ?>.</p>

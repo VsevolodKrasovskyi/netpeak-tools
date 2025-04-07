@@ -6,12 +6,14 @@
  * Author: Netpeak Dev Team
  * Author URI: https://netpeak.dev/
  * Text Domain: netpeak-seo
+ * Requires Plugins: netpeak-manager
  * Domain Path: /languages
  * Requires at least: 5.7
  * Requires PHP: 7.0
  * License: Subscription-based License
  * License URI: https://cdn.netpeak.dev/license-information
  * Version: 1.0.11
+ * 
  * ███╗   ██╗███████╗████████╗██████╗ ███████╗ █████╗ ██╗  ██╗
  * ████╗  ██║██╔════╝╚══██╔══╝██╔══██╗██╔════╝██╔══██╗██║ ██╔╝
  * ██╔██╗ ██║█████╗     ██║   ██████╔╝█████╗  ███████║█████╔╝ 

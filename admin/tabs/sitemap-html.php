@@ -1,7 +1,3 @@
-<?php
-include NETPEAK_SEO_COMPONENTS_ADMIN . 'tab-header.php';
-?>
-
 <div class="wrap wrap-netpeak">
 
     <?php if (get_option('netpeak_seo_sitemap_enabled') != 1) : ?>

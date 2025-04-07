@@ -1,95 +1,74 @@
 <?php
 
+namespace NetpeakTools\Admin;
+
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
 function netpeak_seo_add_admin_menu() {
-    add_menu_page(
+    add_submenu_page(
+        '__return_false',
         __( 'Netpeak Tools', 'netpeak-seo' ),              
         __( 'Netpeak Tools', 'netpeak-seo' ),              
         'manage_options',                                
-        'netpeak-seo-main',                              
-        'license_page',                  
-        NETPEAK_SEO_IMAGE . 'netpeak-icon.svg'
-    );
-
-    // Tab HTML Maps
-    add_submenu_page(
-        'netpeak-seo-main',                       
-        __( 'HTML Maps', 'netpeak-seo' ),                
-        __( 'HTML Maps', 'netpeak-seo' ),                
-        'manage_options',                                
-        'netpeak-seo-html-maps',                         
-        'netpeak_seo_html_maps_page'                     
-    );
-
-    // Tab Basic Redirect
-    add_submenu_page(
-        'netpeak-seo-main',                             
-        __( 'Basic Redirect', 'netpeak-seo' ),           
-        __( 'Basic Redirect', 'netpeak-seo' ),           
-        'manage_options',                                
-        'netpeak-seo-basic-redirect',                    
-        'netpeak_seo_basic_redirect'                     
-    );
-
-    // Tab Schema & Structure
-    add_submenu_page(
-        'netpeak-seo-main',                          
-        __( 'Schema & Structure', 'netpeak-seo' ),           
-        __( 'Schema & Structure', 'netpeak-seo' ),           
-        'manage_options',                                
-        'netpeak-schema-and-structure', // URL           
-        'schema_and_structure_page'
-    );
-    //Mail Setting
-    add_submenu_page(
-        'netpeak-seo-main',
-        __( 'Mail Setting', 'netpeak-seo' ),
-        __( 'Mail Setting', 'netpeak-seo' ),
-        'manage_options',
-        'netpeak-mail-setting',
-        'mail_setting_page'
-    );
-    //License
-    add_submenu_page( 
-        'netpeak-seo-main',
-        __( 'License', 'netpeak-seo' ),           
-        __( 'License', 'netpeak-seo' ),  
-        'manage_options',
-        'netpeak-seo-tools-license',
-        'license_page'
+        'netpeak-tools',                              
+        [Menu::class, 'render_logs_page'],                 
+        '__return_false'
     );
 }
-add_action( 'admin_menu', 'netpeak_seo_add_admin_menu' );
+add_action( 'admin_menu', __NAMESPACE__ . '\\netpeak_seo_add_admin_menu' );
 
+class Menu
+{
+    private static function tabs($active_tab)
+    {
+        $tabs = [
+            'html-maps' => 'HML Maps',
+            'redirects' => 'Redirects',
+            'mail-settings' => 'Mail Settings',
+            'schema-structure' => 'Schema & Structure',
+            
+        ];
+        
+        $output = '';
+        foreach ($tabs as $tab => $label) {
+            $is_active = $active_tab === $tab ? 'netpeak-nav-tab-active' : '';
+            $output .= '<a href="?page=netpeak-tools&tab=' . esc_attr($tab) . '" class="netpeak-nav-tab ' . esc_attr($is_active) . '">' . esc_html($label) . '</a>';
+        }
+        return $output;
+    }
+    public static function render_logs_page()
+    {
+        $active_tab = sanitize_text_field($_GET['tab'] ?? 'html-maps');
 
-/*
- * @category tabs
- * @author Netpeak Dev
-*/
+        echo '<div class="wrap">';
+        echo '<h1 class="netpeak-settings-title">Netpeak Tools</h1>';
+        echo '<div class="netpeak-nav-tab-wrapper">';
+        echo self::tabs($active_tab);
+        echo '</div>';
 
-include NETPEAK_SEO_COMPONENTS_ADMIN . 'widget-dashboard.php';
+        echo '<div class="netpeak-tab-content-wrapper">';
+        self::render_tab_content($active_tab);
+        echo '</div>';
+        echo '</div>';
+    }
 
-function netpeak_seo_html_maps_page() {
-    include NETPEAK_SEO_PLUGIN_DIR . 'admin/tabs/sitemap-html.php';
+    private static function render_tab_content($active_tab)
+    {
+        if ($active_tab === 'html-maps') {
+            include NETPEAK_SEO_PLUGIN_DIR . 'admin/tabs/sitemap-html.php';
+        } elseif ($active_tab === 'redirects') {
+            include NETPEAK_SEO_PLUGIN_DIR . 'admin/tabs/redirect.php';
+        } elseif ($active_tab === 'mail-settings') {
+            include NETPEAK_SEO_PLUGIN_DIR . 'admin/tabs/mail.php';
+        } elseif ($active_tab === 'schema-structure') {
+            include NETPEAK_SEO_PLUGIN_DIR . 'admin/tabs/schemas.php';
+        }
+    }
+
 }
 
-function netpeak_seo_basic_redirect() {
-    include NETPEAK_SEO_PLUGIN_DIR . 'admin/tabs/redirect.php';
-}
-
-function schema_and_structure_page() {
-    include NETPEAK_SEO_PLUGIN_DIR . 'admin/tabs/schemas.php';
-}
-function mail_setting_page() {
-    include NETPEAK_SEO_PLUGIN_DIR . 'admin/tabs/mail.php';
-}
-
-function license_page() {
-    include NETPEAK_SEO_PLUGIN_DIR . 'admin/tabs/license.php';
-}
 
 
 

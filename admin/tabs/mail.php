@@ -1,6 +1,3 @@
-<?php
-include NETPEAK_SEO_COMPONENTS_ADMIN . 'tab-header.php';
-?>
 <!--Notification -->
 <?php if (get_option('netpeak_smtp_enabled') != 1) : ?>
     <div class="notice notice-warning is-dismissible">
@@ -8,7 +5,7 @@ include NETPEAK_SEO_COMPONENTS_ADMIN . 'tab-header.php';
     </div>
 <?php endif; ?>
 
-<div style="display:flex; gap:20px" class="licensed-feature">
+<div style="display:flex; gap:20px" class="licensed-feature" data-license-message="<?php esc_attr_e('License required to access these settings', 'your-plugin-textdomain'); ?>">
     <div class="wrap">
         <h1><?php _e('SMTP Settings', 'netpeak-seo'); ?></h1>
         <form method="post" action="options.php">
