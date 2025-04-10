@@ -14,7 +14,7 @@ function netpeak_seo_add_admin_menu() {
         'manage_options',                                
         'netpeak-tools',                              
         [Menu::class, 'render_logs_page'],                 
-        '__return_false'
+        null
     );
 }
 add_action( 'admin_menu', __NAMESPACE__ . '\\netpeak_seo_add_admin_menu' );

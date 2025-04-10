@@ -5,6 +5,8 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
+use NetpeakManager\CDN;
+
 // Include admin menu if in the admin area
 if ( is_admin() ) {
     require_once NETPEAK_SEO_PLUGIN_DIR . 'admin/menu.php';
@@ -25,13 +27,13 @@ function netpeak_tools_load_assets() {
 add_action('admin_enqueue_scripts', 'netpeak_tools_load_assets');
 
 add_action('plugins_loaded', function () {
-    if (!class_exists('\Netpeak\CDN')) {
+    if (!class_exists('\NetpeakManager\CDN')) {
         add_action('admin_notices', function () {
             echo '<div class="notice notice-error"><p><strong>Netpeak Manager</strong> plugin must be activated for this plugin to function.</p></div>';
         });
         return;
     }
-    $cdn = \Netpeak\CDN::getInstance();
+    $cdn = CDN::getInstance();
     $cdn_options = [
         'netpeak_smtp_enabled' => 'mail'
     ];
